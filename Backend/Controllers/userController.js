@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User'); // Adjust path as needed
+const { User } = require('../models/userModel');
+//const User = require('../models/userModel.js'); // Adjust path as needed
 
 // User Registration Controller
 const register = async (req, res) => {
