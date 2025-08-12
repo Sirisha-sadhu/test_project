@@ -1,6 +1,7 @@
 const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
+const connectToMongoDB = require('./config/mongodbConfig');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,4 +20,5 @@ const port = process.env.PORT || PORT;
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
+    connectToMongoDB();
 });
