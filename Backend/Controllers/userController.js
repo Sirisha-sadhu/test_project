@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { User } = require('../models/userModel');
-//const User = require('../models/userModel.js'); // Adjust path as needed
+const { User } = require('../models/userModel.js');
 
 // User Registration Controller
 const register = async (req, res) => {
@@ -14,21 +13,24 @@ const register = async (req, res) => {
             return res.status(400).json({ message: 'User already exists' });
         }
 
+
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create new user
         const user = new User({
-            username,
+            firstName,
+            LastName,
+            dob,
             email,
             password: hashedPassword,
         });
 
         await user.save();
 
-        res.status(201).json({ message: 'User registered successfully' });
+        res.status(201).json({ message: 'User registered successfully', user: user });
     } catch (err) {
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: 'Server error', err });
     }
 };
 

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-    username: {
+    firstName: {
         type: String,
         required: true,
         unique: true,
@@ -9,9 +9,20 @@ const userSchema = new mongoose.Schema({
         minlength: 3,
         maxlength: 30
     },
-    phoneNo:{
+    LastName: {
         type: String,
         required: true,
+        unique: true,
+        trim: true,
+        minlength: 3,
+        maxlength: 30
+    },
+    dob: {
+        type: String,
+        required: true
+    },
+    phoneNo:{
+        type: String,
         unique: true,
         trim: true,
         match: [/^\d{10}$/, 'Please fill a valid phone number']
@@ -35,4 +46,6 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-export const User = mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema);
+
+module.exports = { User };
