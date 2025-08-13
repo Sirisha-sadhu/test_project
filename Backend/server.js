@@ -1,30 +1,18 @@
-const express = require('express');
-require('dotenv').config();
-const cors = require('cors');
-const connectToMongoDB = require('./config/mongodbConfig');
-const userRoutes = require('./Routes/Users.js');
+
+const app = require("./app");
+const logger = require("./src/config/logger.config");
+const { SERVER_PORT, DEVELOPMENT_MODE } = require("./src/config/index.config");
 
 
 
+function startServer() {
+  app.listen(SERVER_PORT, () => {
+    console.log("Server Mode : ", DEVELOPMENT_MODE);
+    console.log("server is started", SERVER_PORT);
+    logger.info(`Server Mode : ${DEVELOPMENT_MODE}`);
+    logger.info(`Server is running on  : http://localhost:${SERVER_PORT}`);
+    console.log(`Server is running on  : http://localhost:${SERVER_PORT}`);
+  });
+}
 
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Enable Cross-Origin Resource Sharing
-app.use(cors());
-
-app.get('/', (req, res)=>{
-    res.json('Welcome to test project')
-});
-
-app.use('/api/users', userRoutes );
-
-const port = process.env.PORT || PORT;
-
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-    connectToMongoDB();
-});
+startServer();
