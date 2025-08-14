@@ -1,6 +1,37 @@
 import { useState } from "react";
+import StepProgress from "../components/StepProgress";
+import { useNavigate } from "react-router-dom";
 
-export default function Register() {
+// ✅ Reusable Floating Input Component
+const FloatingInput = ({ label, type, name, value, onChange }) => {
+  const isActive = value && value.length > 0;
+
+  return (
+    <div className="relative w-full">
+      <input
+        type={type}
+        name={name}
+        value={value}
+        onChange={onChange}
+        className="peer w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+        required
+      />
+      <label
+        className={`absolute left-4 px-1 bg-white transition-all ${
+          isActive
+            ? "-top-2.5 text-sm text-blue-500"
+            : "top-2 text-gray-400 text-base"
+        } peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-blue-500`}
+      >
+        {label}
+      </label>
+    </div>
+  );
+};
+
+export default function Register({ setStep }) {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -21,44 +52,30 @@ export default function Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
       return;
     }
+
     setError("");
-    console.log("Form submitted:", formData);
-    // Send to backend
+    localStorage.setItem("user", JSON.stringify(formData));
+
+    // Move to Login Step
+    setStep(2);
+    navigate("/login");
   };
 
-  const FloatingInput = ({ label, type, name, value, onChange }) => (
-    <div className="relative w-full">
-      <input
-        type={type}
-        name={name}
-        value={value}
-        onChange={onChange}
-        placeholder=" "
-        className="peer w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-        required
-      />
-      <label
-        className="absolute left-4 -top-2.5 bg-white px-1 text-sm text-gray-500 transition-all 
-                   peer-placeholder-shown:top-2 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base 
-                   peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-blue-500"
-      >
-        {label}
-      </label>
-    </div>
-  );
-
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
-      <div className="w-full max-w-lg bg-white rounded-2xl shadow-lg p-8">
+    <div className="flex flex-col items-center min-h-screen bg-gray-100 px-4 py-6">
+      <StepProgress currentStep={1} />
+      <div className="w-full max-w-lg bg-white rounded-2xl shadow-lg p-8 mt-4">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
           Create an Account
         </h2>
+
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Name Fields */}
+          {/* First & Last Name */}
           <div className="flex flex-col sm:flex-row gap-4">
             <FloatingInput
               label="First Name"
@@ -76,7 +93,7 @@ export default function Register() {
             />
           </div>
 
-          {/* DOB + Gender */}
+          {/* DOB & Gender */}
           <div className="flex flex-col sm:flex-row gap-4">
             <FloatingInput
               label="Date of Birth"
@@ -99,9 +116,11 @@ export default function Register() {
                 <option value="other">Other</option>
               </select>
               <label
-                className="absolute left-4 -top-2.5 bg-white px-1 text-sm text-gray-500 transition-all 
-                           peer-placeholder-shown:top-2 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base 
-                           peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-blue-500"
+                className={`absolute left-4 px-1 bg-white transition-all ${
+                  formData.gender
+                    ? "-top-2.5 text-sm text-blue-500"
+                    : "top-2 text-gray-400 text-base"
+                } peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-blue-500`}
               >
                 Gender
               </label>
@@ -140,26 +159,26 @@ export default function Register() {
               onChange={handleChange}
             />
           </div>
- <div className="flex flex-col sm:flex-row gap-4">
-          {/* Password */}
-          <FloatingInput
-            label="Password"
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-          />
 
-          {/* Confirm Password */}
-          <FloatingInput
-            label="Confirm Password"
-            type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-          />
-</div>
-          {/* Error message */}
+          {/* Password & Confirm Password */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            <FloatingInput
+              label="Password"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+            />
+            <FloatingInput
+              label="Confirm Password"
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Error */}
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
           {/* Submit Button */}
