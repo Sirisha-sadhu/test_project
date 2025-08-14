@@ -12,13 +12,24 @@ const AwsMailServiceClass = require("../../aws/mails/mail.ses");
 // config
 const logger = require("../../config/logger.config");
 
-const sendRegisterUserOTPController = async (req, res, next) => {
+const sendRegisterUserEmailOTPController = async (req, res, next) => {
   try {
     logger.info(
-      "controller - users - otpVerfication.controller - sendOTPVerficationController - start"
+      "controller - users - otpVerfication.controller - sendRegisterUserEmailOTPController - start"
     );
 
-    const isOtpExist = await otpModel.findOne({ user: req.user._id });
+    if (req.user.isEmailVerified) {
+      return responseHandlerUtil.successResponseStandard(res, {
+        message: "already user email is verified",
+      });
+    }
+
+    const isOtpExist = await otpModel
+      .findOne({
+        user: req.user._id,
+        type: "email",
+      })
+      .lean();
     let otpDetails = null;
 
     if (isOtpExist && isOtpExist.count >= 3) {
@@ -35,9 +46,11 @@ const sendRegisterUserOTPController = async (req, res, next) => {
         )
       );
     } else if (isOtpExist) {
+      const otp = generateOTP();
       otpDetails = await otpModel.findByIdAndUpdate(
         isOtpExist._id,
         {
+          otp,
           $inc: { count: 1 },
           expiresAt: new Date(Date.now() + 5 * 60 * 1000),
         },
@@ -49,6 +62,7 @@ const sendRegisterUserOTPController = async (req, res, next) => {
         user: req.user._id,
         email: req.user.email,
         otp,
+        type: "email",
       });
       await otpDetails.save();
     }
@@ -68,30 +82,32 @@ const sendRegisterUserOTPController = async (req, res, next) => {
     // );
 
     logger.info(
-      "controller - users - otpVerfication.controller - sendOTPVerficationController - end"
+      "controller - users - otpVerfication.controller - sendRegisterUserEmailOTPController - end"
     );
 
     responseHandlerUtil.successResponseStandard(res, {
-      message: "otp send successfully",
+      message: "otp send successfully on the given mail",
     });
   } catch (error) {
     logger.error(
-      "controller - users - otpVerfication.controller - sendOTPVerficationController - error",
+      "controller - users - otpVerfication.controller - sendRegisterUserEmailOTPController - error",
       error
     );
     errorHandling.handleCustomErrorService(error, next);
   }
 };
 
-const verifyRegisterUserOTPController = async (req, res, next) => {
+const verifyRegisterUserEmailOTPController = async (req, res, next) => {
   try {
     logger.info(
-      "controller - users - otpVerfication.controller - verifyRegisterUserOTPController - start"
+      "controller - users - otpVerfication.controller - verifyRegisterUserEmailOTPController - start"
     );
 
     const { otp } = req.body;
 
-    const isOtpExist = await otpModel.findOne({ user: req.user._id }).lean();
+    const isOtpExist = await otpModel
+      .findOne({ user: req.user._id, type: "email" })
+      .lean();
 
     if (!isOtpExist || isOtpExist.expiresAt < new Date())
       return next(
@@ -123,10 +139,10 @@ const verifyRegisterUserOTPController = async (req, res, next) => {
     }
 
     await otpModel.findByIdAndDelete(isOtpExist._id);
-    await userModel.findByIdAndUpdate(req.user._id, { isVerified: true });
+    await userModel.findByIdAndUpdate(req.user._id, { isEmailVerified: true });
 
     logger.info(
-      "controller - users - otpVerfication.controller - verifyRegisterUserOTPController - end"
+      "controller - users - otpVerfication.controller - verifyRegisterUserEmailOTPController - end"
     );
 
     responseHandlerUtil.successResponseStandard(res, {
@@ -134,7 +150,7 @@ const verifyRegisterUserOTPController = async (req, res, next) => {
     });
   } catch (error) {
     logger.error(
-      "controller - users - otpVerfication.controller - verifyRegisterUserOTPController - error",
+      "controller - users - otpVerfication.controller - verifyRegisterUserEmailOTPController - error",
       error
     );
     errorHandling.handleCustomErrorService(error, next);
@@ -142,6 +158,6 @@ const verifyRegisterUserOTPController = async (req, res, next) => {
 };
 
 module.exports = {
-  sendRegisterUserOTPController,
-  verifyRegisterUserOTPController,
+  sendRegisterUserEmailOTPController,
+  verifyRegisterUserEmailOTPController,
 };
