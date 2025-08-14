@@ -1,9 +1,8 @@
 const httpErrors = require("http-errors");
 const userModel = require("../../schema/user.model");
-const USER_CONSTANTS = require("../../constants/user.constants");
+const kycModel = require("../../schema/kyc.model");
+
 const logger = require("../../config/logger.config");
-const { verifyPasswordMethod } = require("../../utils/verifyPassword.util");
-const { createAccessToken } = require("../../utils/jwtToken.util");
 const errorHandling = require("../../utils/errorHandling.util");
 const responseHandlerUtil = require("../../utils/responseHandler.util");
 
@@ -12,11 +11,10 @@ const submitKycController = async (req, res, next) => {
     logger.info(
       "controller - kyc - kyc.controller - submitKycController - start"
     );
-    const details = await userModel.findById(req.user._id).lean();
-
-    logger.info(
+    const isKycExist = await logger.info(
       "controller - kyc - kyc.controller - submitKycController - end"
     );
+
     responseHandlerUtil.successResponseStandard(res, {
       message: "successfully user details fetched",
       data: details,
@@ -31,6 +29,5 @@ const submitKycController = async (req, res, next) => {
 };
 
 module.exports = {
-  registerUserController,
-  myProfileController,
+  submitKycController,
 };

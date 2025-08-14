@@ -66,6 +66,26 @@ module.exports.Authorization = (...roles) => {
   };
 };
 
+// user email,phone verified middleware
+module.exports.CheckUserVerified = (req, res, next) => {
+  if (!req.user?.isEmailVerified)
+    return next(httpErrors.Forbidden("User email is not verified"));
+  else if (!req.user?.isPhoneVerified)
+    return next(httpErrors.Forbidden("User Phone is not verified"));
+  else next();
+};
+
+// user email,phone,kyc verified middleware
+module.exports.CompletelyUserVerified = (req, res, next) => {
+  if (!req.user?.isEmailVerified)
+    return next(httpErrors.Forbidden("User email is not verified"));
+  else if (!req.user?.isPhoneVerified)
+    return next(httpErrors.Forbidden("User Phone is not verified"));
+  else if (!req.user?.isKycVerified)
+    return next(httpErrors.Forbidden("User Phone is not verified"));
+  else next();
+};
+
 // setting headers for the development purpose
 module.exports.setHeaderDevelopment = (req, res, next) => {
   let token = DEVELOPMENT_ACCESS_USER_TOKEN;
