@@ -20,7 +20,7 @@ const ModelSchema = new mongoose.Schema(
     email: {
       type: String,
     },
-    phone: {
+    phoneNumber: {
       type: String,
     },
     count: {
