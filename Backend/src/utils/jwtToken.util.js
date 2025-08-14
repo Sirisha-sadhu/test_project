@@ -14,7 +14,7 @@ const {
  * @returns The `createAccessToken` function returns a Promise that resolves with the access token
  * generated using the `jwt.sign` method.
  */
-const createAccessToken = async (userId, role) => {
+const createAccessToken = async (userId, role, ) => {
   if (!userId) return Promise.reject(new Error("User  ID is required"));
   let payload = {
     id: userId,

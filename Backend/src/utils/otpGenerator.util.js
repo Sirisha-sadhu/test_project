@@ -1,5 +1,7 @@
 const nodemailer = require('nodemailer');
 const crypto = require("crypto");
+const twilio = require('twilio');
+const { send } = require('process');
 
 // Generate a random 6-digit OTP
 const generateOTP = () => {
@@ -38,4 +40,22 @@ async function sendOTPEmail(toEmail) {
     }
 }
 
-module.exports = { sendOTPEmail };
+const sendOTPPhone = async (phoneNumber) => {
+    
+    const accountSid = process.env.TWILIO_ACCOUNT_SID;
+    const authToken = process.env.TWILIO_AUTH_TOKEN;
+    const client = twilio(accountSid, authToken);
+
+    const phoneOtp = generateOTP();
+
+    await client.messages.create({
+        body: `Your OTP for phone verification is: ${phoneOtp}`,
+        from: process.env.TWILIO_PHONE_NUMBER || +15158525571, // Your Twilio phone number
+        to: phoneNumber,
+    });
+
+    console.log(`OTP sent to ${phoneNumber}: ${phoneOtp}`);
+    return phoneOtp; // Return OTP for further verification
+}
+
+module.exports = { sendOTPEmail, sendOTPPhone };

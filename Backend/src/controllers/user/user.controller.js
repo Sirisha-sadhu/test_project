@@ -51,8 +51,6 @@ const registerUserController = async (req, res, next) => {
       countryCode,
       dob
     });
-
-    await newUserDetails.save();
     delete newUserDetails.password // remove password from response
 
     const token = await createAccessToken(
@@ -63,6 +61,10 @@ const registerUserController = async (req, res, next) => {
     newUserDetails.token = token;
     await newUserDetails.save();
 
+    const leanUserDetails = newUserDetails.toObject();
+    delete leanUserDetails.password;
+    delete leanUserDetails.token;
+
     logger.info(
       "controller - users - user.controller - registerUserController - end"
     );
@@ -71,8 +73,8 @@ const registerUserController = async (req, res, next) => {
       success: true,
       statusCode: 201,
       message: USER_CONSTANTS.SUCCESSFULLY_USER_CREATED,
-      data: newUserDetails,
-      otherData: { token },
+      data: leanUserDetails,
+      otherData: { token, type:'register' },
     });
   } catch (error) {
     logger.error(
