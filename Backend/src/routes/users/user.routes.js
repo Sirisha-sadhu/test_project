@@ -1,17 +1,20 @@
 //import statements
 const express = require("express");
-const { registerUser, myProfile,} = require("../../controllers/user/user.controller");
-const {registerUserValidation,} = require("../../validators/user/user.validation");
-const {Authentication, setHeaderDevelopment,} = require("../../middlewares/auth.middleware");
-const { sendOTPVerficationController,} = require("../../controllers/user/otpVerification.controller");
+const { registerUserController, myProfileController, loginUserController,} = require("../../controllers/user/user.controller");
+const {registerValidation, loginValidation} = require("../../validators/user/user.validation");
+
+const { emailOTPVerficationController,} = require("../../controllers/user/otpVerification.controller");
+const { Authentication, setHeaderDevelopment } = require("../../middlewares/auth.middleware");
 
 const UserRoutes = express.Router();
 
 //user routes
-UserRoutes.route("/register").post( registerUserValidation, registerUser);
+UserRoutes.route("/register").post( registerValidation, registerUserController);
+UserRoutes.route("/login").post(loginValidation, loginUserController);
 
-UserRoutes.route("/my-profile").get(Authentication, myProfile);
+UserRoutes.route("/my-profile").get(Authentication, myProfileController);
 
-UserRoutes.route("/send-otp").get( setHeaderDevelopment, Authentication, sendOTPVerficationController);
+UserRoutes.route("/verify-email").get( setHeaderDevelopment, Authentication, emailOTPVerficationController);
+UserRoutes.route("/verify-phone").get( setHeaderDevelopment, Authentication, emailOTPVerficationController);
 
 module.exports = UserRoutes;

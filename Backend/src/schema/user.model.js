@@ -26,6 +26,10 @@ const ModelSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
+    countryCode: {
+      type: String,
+      required: true,
+    },
     phoneNumber: {
       type: String,
       required: true,
@@ -66,13 +70,6 @@ const ModelSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-ModelSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) {
-    next();
-  }
-  this.password = await bcrypt.hash(this.password, 10);
-});
 
 const userModel = mongoose.model(user, ModelSchema);
 

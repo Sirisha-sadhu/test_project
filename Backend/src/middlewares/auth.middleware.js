@@ -19,7 +19,7 @@ const {
 const { rolesConstants } = require("../constants/index.constants");
 
 // authentication middleware
-module.exports.Authentication = async (req, res, next) => {
+const Authentication = async (req, res, next) => {
   try {
     let authHeader = req.header("Authorization");
     if (DEVELOPMENT_MODE === "development" && req?.authToken) {
@@ -55,7 +55,7 @@ module.exports.Authentication = async (req, res, next) => {
 };
 
 // authorization depending  upon a role
-module.exports.Authorization = (...roles) => {
+const Authorization = (...roles) => {
   return (req, res, next) => {
     const userRole = req.role;
     const roles = Object.values(rolesConstants);
@@ -67,8 +67,14 @@ module.exports.Authorization = (...roles) => {
 };
 
 // setting headers for the development purpose
-module.exports.setHeaderDevelopment = (req, res, next) => {
+const setHeaderDevelopment = (req, res, next) => {
   let token = DEVELOPMENT_ACCESS_USER_TOKEN;
   req.authToken = token;
   next();
 };
+
+module.exports = {
+  Authentication,
+  Authorization,
+  setHeaderDevelopment,
+}

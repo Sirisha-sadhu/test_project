@@ -9,7 +9,7 @@ const responseHandlerUtil = require("../../utils/responseHandler.util");
 const { generateOTP } = require("../../utils/otpGenerator.util");
 const otpModel = require("../../schema/otp.model");
 
-const sendOTPVerficationController = async (req, res, next) => {
+const emailOTPVerficationController = async (req, res, next) => {
   try {
     logger.info(
       "controller - users - otpVerfication.controller - sendOTPVerficationController - start"
@@ -42,5 +42,5 @@ const sendOTPVerficationController = async (req, res, next) => {
 };
 
 module.exports = {
-  sendOTPVerficationController,
+  emailOTPVerficationController,
 };

@@ -24,6 +24,13 @@ const registerValidation = celebrate({
             .messages({
                 'string.pattern.base': 'Password must be 8-15 characters, include at least one uppercase letter and one special character.',
             }),
+        confirmPassword: Joi.string()
+            .valid(Joi.ref('password'))
+            .required()
+            .messages({
+                'any.only': 'Confirm password must match the password.',
+                'any.required': 'Confirm password is required.'
+            }),
         email: Joi.string()
             .email()
             .required()
@@ -37,7 +44,7 @@ const registerValidation = celebrate({
                 'string.pattern.base': 'Country code must be in format +<digits> (e.g. +91)',
                 'any.required': 'Country code is required'
         }),
-        phone: Joi.string()
+        phoneNumber: Joi.string()
             .pattern(/^[0-9]{7,15}$/) // only digits, length between 7 and 15
             .required()
             .messages({
@@ -52,7 +59,30 @@ const registerValidation = celebrate({
                 'date.iso': 'Date of birth must be in ISO format (YYYY-MM-DD).',
                 'date.less': 'Date of birth must be in the past.'
             }),
+        gender: Joi.string(),
     }),
 });
 
-module.exports = registerValidation;
+const loginValidation = celebrate({
+    [Segments.BODY]: Joi.object().keys({
+        email: Joi.string()
+            .email()
+            .required()
+            .messages({
+                'string.email': 'Email must be a valid email address.',
+                'any.required': 'Email is required.'
+            }),
+        password: Joi.string()
+            .pattern(/^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,15}$/)
+            .required()
+            .messages({
+                'any.required': 'Password is required.'
+            }),
+    }),
+});
+
+
+module.exports = {
+    registerValidation,
+    loginValidation
+};

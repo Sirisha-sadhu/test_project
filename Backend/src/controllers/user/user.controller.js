@@ -6,8 +6,9 @@ const { verifyPasswordMethod } = require("../../utils/verifyPassword.util");
 const { createAccessToken } = require("../../utils/jwtToken.util");
 const errorHandling = require("../../utils/errorHandling.util");
 const responseHandlerUtil = require("../../utils/responseHandler.util");
+const bcrypt = require("bcrypt");
 
-const registerUser = async (req, res, next) => {
+const registerUserController = async (req, res, next) => {
   try {
     logger.info(
       "controller - users - user.controller - registerUserController - start"
@@ -20,12 +21,17 @@ const registerUser = async (req, res, next) => {
       password,
       confirmPassword,
       gender,
+      countryCode,
       phoneNumber,
+      dob
     } = req.body;
 
     // if passwords or not same
     if (password !== confirmPassword)
       return next(httpErrors.BadRequest(USER_CONSTANTS.CONFIRM_PASSWORD_SAME));
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log("hashedPassword", hashedPassword);
 
     let userExist = await userModel.findOne({ email: email });
 
@@ -33,16 +39,21 @@ const registerUser = async (req, res, next) => {
     if (userExist)
       return next(httpErrors.BadRequest(USER_CONSTANTS.USER_ALREADY_EXISTS));
 
+
+
     const newUserDetails = new userModel({
       firstName,
       lastName,
       email,
-      password,
+      password: hashedPassword,
       gender,
       phoneNumber,
+      countryCode,
+      dob
     });
 
     await newUserDetails.save();
+    delete newUserDetails.password // remove password from response
 
     const token = await createAccessToken(
       newUserDetails?._id.toString(),
@@ -72,7 +83,7 @@ const registerUser = async (req, res, next) => {
   }
 };
 
-const loginUser = async (req, res) => {
+const loginUserController = async (req, res, next) => {
     try {
       logger.info(
         "controller - users - user.controller - loginUserController - start"
@@ -80,10 +91,9 @@ const loginUser = async (req, res) => {
         const { email, password } = req.body;
 
         // Find user by email
-        const user = await userModel.findOne({ email });
+        const user = await userModel.findOne({ email }).select("+password") ;
         if (!user)
-          return next(httpErrors.BadRequest(USER_CONSTANTS.INVALID_EMAIL));
-
+          return next(httpErrors.BadRequest(USER_CONSTANTS.USER_NOT_FOUND));
         // Compare password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
@@ -91,20 +101,29 @@ const loginUser = async (req, res) => {
         }
 
         // Generate JWT token
-        const token = jwt.sign(
-            { userId: user._id, email: user.email },
-            process.env.JWT_SECRET || 'Test_Project_Secret_Key',
-            { expiresIn: '1h' }
+      const token = await createAccessToken(
+          user?._id.toString(),
+          user.role
         );
 
-        res.json({ token });
-    } catch (err) {
-        res.status(500).json({ message: 'Server error' });
+      responseHandlerUtil.successResponseStandard(res, {
+      success: true,
+      statusCode: 200,
+      message: USER_CONSTANTS.SUCCESSFULLY_USER_LOGIN,
+      otherData: { token },
+    });
+    } catch (error) {
+      console.log("Error in loginUserController:", error);
+        logger.error(
+          "controller - users - user.controller - loginUserController - error",
+          error
+        );
+        errorHandling.handleCustomErrorService(error, next);
     }
 };
 
 
-const myProfile = async (req, res, next) => {
+const myProfileController = async (req, res, next) => {
   try {
     logger.info(
       "controller - users - user.controller - myProfileController - start"
@@ -129,7 +148,7 @@ const myProfile = async (req, res, next) => {
 
 
 module.exports = {
-  registerUser,
-  myProfile,
-  loginUser
+  registerUserController,
+  myProfileController,
+  loginUserController
 };
