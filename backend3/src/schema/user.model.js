@@ -37,7 +37,11 @@ const ModelSchema = new mongoose.Schema(
       required: true,
       enum: ["male", "female", "other"],
     },
-    isVerified: {
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    isPhoneVerified: {
       type: Boolean,
       default: false,
     },
