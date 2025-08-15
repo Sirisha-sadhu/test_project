@@ -81,7 +81,7 @@ export default function Register({ setStep }) {
   const { loading, error } = useSelector((state) => state.register || {});
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-100 px-4 py-6">
+    <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-blue-100 to-purple-200 px-4 py-6">
       <StepProgress currentStep={1} />
       <div className="w-full max-w-lg bg-white rounded-2xl shadow-lg p-8 mt-4">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
@@ -102,7 +102,6 @@ export default function Register({ setStep }) {
           }}
           validationSchema={RegisterSchema}
           onSubmit={(values, { setSubmitting }) => {
-            console.log("Form values:", values);
             dispatch(registerUser(values))
               .then(() => {
                 setStep(2);

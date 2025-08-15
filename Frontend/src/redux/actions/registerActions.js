@@ -23,10 +23,9 @@ export const registerFailure = (error) => ({
 // Async Action (Thunk)
 export const registerUser = (userData) => async (dispatch) => {
     dispatch(registerRequest());
-    console.log("Registering user with data:", userData);
     try {
         const response = await axios.post(`http://localhost:8000/api/v1/user/register`, userData);
-        console.log("Registration response:", response.data);
+        localStorage.setItem('user', JSON.stringify(response.data.data)); // Store token if needed
         dispatch(registerSuccess(response.data));
     } catch (error) {
         console.log("Registration error:", error.response?.data);

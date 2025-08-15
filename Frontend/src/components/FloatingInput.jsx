@@ -10,6 +10,7 @@ const FloatingInput = ({ label, type, name, value, ...props }) => {
         name={name}
         placeholder=" "
         {...props}
+        value={value}
         className="peer w-full px-4 py-2 border border-gray-300 rounded-lg 
                    focus:ring-2 focus:ring-blue-500 outline-none"
       />

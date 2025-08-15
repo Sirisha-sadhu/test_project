@@ -1,9 +1,10 @@
-import { FaUserPlus, FaEnvelopeSquare, FaIdCard, FaTachometerAlt } from "react-icons/fa";
+import { FaUserPlus, FaEnvelopeSquare, FaIdCard, FaTachometerAlt, FaPhoneAlt } from "react-icons/fa";
 
 export default function StepProgress({ currentStep }) {
   const steps = [
     { label: "Register", icon: <FaUserPlus /> },
     { label: "Verify Email", icon: <FaEnvelopeSquare /> },
+    {label: "Verify Phone", icon: <FaPhoneAlt />},
     { label: "KYC", icon: <FaIdCard /> },
     { label: "Dashboard", icon: <FaTachometerAlt /> },
   ];

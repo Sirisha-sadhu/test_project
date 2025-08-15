@@ -45,6 +45,7 @@ import Login from "./pages/Login";
 import KYC from "./pages/KYC";
 import Dashboard from "./pages/Dashboard";
 import EmailVerify from "./Pages/EmailVerify";
+import PhoneVerify from "./Pages/PhoneVerify";
 
 export default function App() {
   const [Step, setStep] = useState(1);
@@ -56,8 +57,9 @@ export default function App() {
         <Route path="/" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} />
         <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated}/>} />
         <Route path="/register" element={<Register setStep={setStep} setIsAuthenticated={setIsAuthenticated} />} />
+        <Route path="/verify-phone" element={<PhoneVerify setStep={setStep}/>} />
         <Route path="/verify-email" element={<EmailVerify setStep={setStep}/>} />
-        <Route path="/kyc" element={isAuthenticated ? <KYC setStep={setStep} /> : <Navigate to="/login" />} />
+        <Route path="/kyc" element={<KYC setStep={setStep} />} />
         <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} />
       </Routes>
     </Router>
