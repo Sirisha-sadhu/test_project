@@ -2,9 +2,13 @@ import { useNavigate } from "react-router-dom";
 import StepProgress from "../components/StepProgress";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser } from "../redux/actions/registerActions";
+import PasswordRules from "@/components/passwordRules";
+import { useState } from "react";
 
 // ✅ Reusable Floating Input with Formik + "value-aware" floating label
-const FloatingInput = ({ label, type, name, value }) => {
+const FloatingInput = ({ label, type, name, value, ...props }) => {
   const isActive = value && value.length > 0; // keeps label up if there's data
 
   return (
@@ -13,6 +17,7 @@ const FloatingInput = ({ label, type, name, value }) => {
         type={type}
         name={name}
         placeholder=" "
+        {...props}
         className="peer w-full px-4 py-2 border border-gray-300 rounded-lg 
                    focus:ring-2 focus:ring-blue-500 outline-none"
       />
@@ -34,53 +39,6 @@ const FloatingInput = ({ label, type, name, value }) => {
   );
 };
 
-// -------------------------------------------
-const EmailHints = ({ email }) => {
-  const hasAt = email.includes("@");
-  const hasDomain = /\.[a-z]{2,}$/.test(email);
-
-  return (
-    <ul className="text-sm mt-1">
-      <li className={hasAt ? "text-green-600" : "text-gray-500"}>
-        {hasAt ? "✔" : "✖"} Must contain @
-      </li>
-      <li className={hasDomain ? "text-green-600" : "text-gray-500"}>
-        {hasDomain ? "✔" : "✖"} Must have a valid domain (.com, .net, etc.)
-      </li>
-    </ul>
-  );
-};
-
-const PasswordHints = ({ password }) => {
-  const hasLength = password.length >= 8;
-  const hasUpper = /[A-Z]/.test(password);
-  const hasLower = /[a-z]/.test(password);
-  const hasNumber = /[0-9]/.test(password);
-  const hasSpecial = /[^A-Za-z0-9]/.test(password);
-
-  return (
-    <ul className="text-sm mt-1">
-      <li className={hasLength ? "text-green-600" : "text-gray-500"}>
-        {hasLength ? "✔" : "✖"} At least 8 characters
-      </li>
-      <li className={hasUpper ? "text-green-600" : "text-gray-500"}>
-        {hasUpper ? "✔" : "✖"} At least 1 uppercase letter
-      </li>
-      <li className={hasLower ? "text-green-600" : "text-gray-500"}>
-        {hasLower ? "✔" : "✖"} At least 1 lowercase letter
-      </li>
-      <li className={hasNumber ? "text-green-600" : "text-gray-500"}>
-        {hasNumber ? "✔" : "✖"} At least 1 number
-      </li>
-      <li className={hasSpecial ? "text-green-600" : "text-gray-500"}>
-        {hasSpecial ? "✔" : "✖"} At least 1 special character
-      </li>
-    </ul>
-  );
-};
-
-
-// -----------------------------------------
 
 // ✅ Yup Validation Schema
 const RegisterSchema = Yup.object().shape({
@@ -95,7 +53,7 @@ const RegisterSchema = Yup.object().shape({
     .required("Date of birth is required"),
   gender: Yup.string().required("Gender is required"),
   countryCode: Yup.string().required("Country code is required"),
-  phoneNo: Yup.string()
+  phoneNumber: Yup.string()
     .matches(/^[0-9]{10,15}$/, "Phone number must be 10–15 digits")
     .required("Phone number is required"),
   email: Yup.string()
@@ -113,15 +71,17 @@ const RegisterSchema = Yup.object().shape({
     .required("Confirm password is required"),
 });
 
-
-
-
 export default function Register({ setStep }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [passwordFocused, setPasswordFocused] = useState(false);
+
+
+  // Optional: Get loading/error states from Redux
+  const { loading, error } = useSelector((state) => state.register || {});
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-100 px-4 py-6">
-    {/* </div><div className="min-h-screen bg-gradient-to-r from-purple-500 to-indigo-500 flex flex-col items-center p-4"> */}
       <StepProgress currentStep={1} />
       <div className="w-full max-w-lg bg-white rounded-2xl shadow-lg p-8 mt-4">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
@@ -135,19 +95,23 @@ export default function Register({ setStep }) {
             dob: "",
             gender: "",
             countryCode: "+91",
-            phoneNo: "",
+            phoneNumber: "",
             email: "",
             password: "",
             confirmPassword: "",
           }}
           validationSchema={RegisterSchema}
-          onSubmit={(values) => {
-            localStorage.setItem("user", JSON.stringify(values));
-            setStep(2);
-            navigate("/login");
+          onSubmit={(values, { setSubmitting }) => {
+            console.log("Form values:", values);
+            dispatch(registerUser(values))
+              .then(() => {
+                setStep(2);
+                navigate("/verify-email");
+              })
+              .finally(() => setSubmitting(false));
           }}
         >
-          {({ values }) => (
+          {({ values, isSubmitting }) => (
             <Form className="space-y-4">
               {/* First & Last Name */}
               <div className="flex flex-col sm:flex-row gap-4">
@@ -231,8 +195,8 @@ export default function Register({ setStep }) {
                 <FloatingInput
                   label="Phone Number"
                   type="tel"
-                  name="phoneNo"
-                  value={values.phoneNo}
+                  name="phoneNumber"
+                  value={values.phoneNumber}
                 />
               </div>
 
@@ -243,6 +207,8 @@ export default function Register({ setStep }) {
                   type="password"
                   name="password"
                   value={values.password}
+                  onFocus={() => setPasswordFocused(true)}
+                  onBlur={() => setPasswordFocused(false)}
                 />
                 <FloatingInput
                   label="Confirm Password"
@@ -252,12 +218,23 @@ export default function Register({ setStep }) {
                 />
               </div>
 
+              {/* Error message from backend */}
+              {error && (
+                <div className="text-red-500 text-sm text-center">{error}</div>
+              )}
+
+              {/* Password Rules */}
+              {passwordFocused &&
+                <PasswordRules password={values.password} />
+              }
+              
               {/* Submit */}
               <button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition duration-200"
+                disabled={loading || isSubmitting}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition duration-200 disabled:opacity-50"
               >
-                Register
+                {loading || isSubmitting ? "Registering..." : "Register"}
               </button>
             </Form>
           )}

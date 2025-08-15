@@ -1,8 +1,9 @@
 import { useState } from "react";
 import StepProgress from "../components/StepProgress";
 import { useNavigate, Link } from "react-router-dom";
+import FloatingInput from "@/components/FloatingInput";
 
-export default function Login({ setStep, setIsAuthenticated }) {
+export default function Login(setIsAuthenticated) {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -36,45 +37,15 @@ export default function Login({ setStep, setIsAuthenticated }) {
     }
   };
 
-  // Reusable floating input
-  const FloatingInput = ({ label, type, name, value, onChange }) => {
-    const isActive = value && value.length > 0;
-
-    return (
-      <div className="relative w-full">
-        <input
-          type={type}
-          name={name}
-          value={value}
-          onChange={onChange}
-          placeholder=" "
-          className="peer w-full p-3 rounded-lg bg-white/70 border border-gray-300 
-                     focus:outline-none focus:border-blue-500"
-          required
-        />
-        <label
-          className={`absolute left-4 px-1 bg-white transition-all duration-200 ${
-            isActive
-              ? "-top-2.5 text-sm text-blue-500"
-              : "top-2 text-gray-400 text-base"
-          } peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-blue-500`}
-        >
-          {label}
-        </label>
-      </div>
-    );
-  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-purple-500 to-indigo-500 flex flex-col items-center p-4">
-      {/* Step Progress */}
-      <StepProgress currentStep={2} />
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-indigo-200 ">
 
       {/* Login Card */}
-      <div className="bg-white/30 backdrop-blur-lg p-8 rounded-2xl shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center text-white mb-6">
+      <div className="bg-white/50 backdrop-blur-lg p-8 rounded-2xl shadow-lg w-full max-w-md">
+        <h1 className="text-2xl font-bold text-center mb-6">
           Welcome Back
-        </h2>
+        </h1>
 
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -97,7 +68,7 @@ export default function Login({ setStep, setIsAuthenticated }) {
           <div className="flex justify-end">
             <Link
               to="/forgot-password"
-              className="text-sm text-blue-200 hover:underline"
+              className="text-base text-blue-500 hover:underline"
             >
               Forgot password?
             </Link>
@@ -114,11 +85,11 @@ export default function Login({ setStep, setIsAuthenticated }) {
         </form>
 
         {/* Sign up link */}
-        <p className="text-center text-white mt-6">
+        <p className="text-center mt-6">
           Don’t have an account?{" "}
           <Link
             to="/register"
-            className="font-semibold text-yellow-300 hover:underline"
+            className="font-semibold text-red-500 hover:underline"
           >
             Sign Up
           </Link>
