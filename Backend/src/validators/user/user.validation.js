@@ -81,8 +81,21 @@ const loginValidation = celebrate({
     }),
 });
 
+const verifyOTPValidation = celebrate({
+  body: Joi.object({
+    otp: Joi.string()
+      .length(6) // assuming OTP is 4 digits
+      .pattern(/^\d+$/) // only digits
+      .required()
+      .trim()
+      .label("OTP"),
+  })
+    .required()
+    .label("body"),
+});
 
 module.exports = {
     registerValidation,
-    loginValidation
+    loginValidation,
+    verifyOTPValidation
 };
