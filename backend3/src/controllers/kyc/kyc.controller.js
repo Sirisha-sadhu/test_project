@@ -1,10 +1,13 @@
 const httpErrors = require("http-errors");
+
+const userModel = require("../../schema/user.model");
 const kycModel = require("../../schema/kyc.model");
 
 const logger = require("../../config/logger.config");
 const errorHandling = require("../../utils/errorHandling.util");
 const responseHandlerUtil = require("../../utils/responseHandler.util");
 const { IS_S3_UPLOAD } = require("../../config/index.config");
+const { CompletelyUserVerified } = require("../../middlewares/auth.middleware");
 
 const submitKycController = async (req, res, next) => {
   try {
@@ -53,6 +56,13 @@ const submitKycController = async (req, res, next) => {
     });
 
     await kycDetails.save();
+    const userDetails = await userModel.findByIdAndUpdate(
+      req.user._id,
+      {
+        $set: { isKycDocsUploaded: true },
+      },
+      { new: true }
+    );
 
     logger.info(
       "controller - kyc - kyc.controller - submitKycController - end"
@@ -61,6 +71,7 @@ const submitKycController = async (req, res, next) => {
     responseHandlerUtil.successResponseStandard(res, {
       message: "successfully kyc documents are submitted",
       data: kycDetails,
+      otherData: { userDetails },
     });
   } catch (error) {
     logger.error(
@@ -71,6 +82,33 @@ const submitKycController = async (req, res, next) => {
   }
 };
 
+const myKycDetailsController = async (req, res, next) => {
+  try {
+    logger.info(
+      "controller - kyc - kyc.controller - myKycDetailsController - start"
+    );
+
+    const kycDetails = await kycModel.findOne({ user: req.user._id });
+
+    responseHandlerUtil.successResponseStandard(res, {
+      message: "successfully kyc details are fetched",
+      data: kycDetails,
+    });
+
+    logger.info(
+      "controller - kyc - kyc.controller - myKycDetailsController - end"
+    );
+  } catch (error) {
+    logger.error(
+      "controller - kyc - kyc.controller - myKycDetailsController - error",
+      error
+    );
+    errorHandling.handleCustomErrorService(error, next);
+  }
+};
+
 module.exports = {
   submitKycController,
+  CompletelyUserVerified,
+  myKycDetailsController,
 };

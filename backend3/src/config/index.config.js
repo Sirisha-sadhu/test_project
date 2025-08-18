@@ -25,5 +25,5 @@ module.exports = {
   AWS_REGION: process.env.AWS_REGION,
   AWS_SES_SENDER: process.env.AWS_SES_SENDER,
 
-  IS_S3_UPLOAD: process.env.IS_S3_UPLOAD ?? false,
+  IS_S3_UPLOAD: process.env.IS_S3_UPLOAD === "true" ? true : false,
 };

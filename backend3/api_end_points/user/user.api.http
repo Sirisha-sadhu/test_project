@@ -13,8 +13,8 @@ Content-Type: application/json
 
 {
    "firstName" :"Mohammed",
-   "lastName" :"Shahid2",
-   "email" :"test2@gmail.com",
+   "lastName" :"Shahid",
+   "email" :"test@gmail.com",
    "gender" :"male",
    "phoneNumber" :"+971504536785",
    "password" :"Test@123",
@@ -26,7 +26,7 @@ POST {{API_BASE_URL_LOCAL}}/user/login
 Content-Type: application/json
 
 {
-   "email" :"test2@gmail.com",
+   "email" :"test@gmail.com",
    "password" :"Test@123"
 }
 

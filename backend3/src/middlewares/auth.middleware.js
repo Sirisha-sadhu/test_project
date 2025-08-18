@@ -82,7 +82,7 @@ module.exports.CompletelyUserVerified = (req, res, next) => {
   else if (!req.user?.isPhoneVerified)
     return next(httpErrors.Forbidden("User Phone is not verified"));
   else if (!req.user?.isKycVerified)
-    return next(httpErrors.Forbidden("User Phone is not verified"));
+    return next(httpErrors.Forbidden("User KYC is not verified"));
   else next();
 };
 

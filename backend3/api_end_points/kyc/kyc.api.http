@@ -1,10 +1,15 @@
-@API_TOKEN_LOCAL = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4OWQ3MWRmNmEyZjYwNTQwMDNkNDllMSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzU1MTQ4NzY3LCJleHAiOjE3NTU0MDc5Njd9.vGC-WwJzndjdxaqRczQ0CzBsX-d_S2aqdpaxxLQvzn4
+@API_TOKEN_LOCAL = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4YTJkYmRkMTEwNjE5ZDMxMTg0NDM2YSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzU1NTAzNTgxLCJleHAiOjE3NTU3NjI3ODF9.sIgI6YSHusZgWl9_EJglwiwF120Z4uRY8BSM3TK8Ihc
 @API_BASE_URL_LOCAL = http://localhost:8000/api/v1
 
 
 
-# My Profile
+# My KYC Details
+GET  {{API_BASE_URL_LOCAL}}/kyc/kyc-details
+Authorization:{{API_TOKEN_LOCAL}}
+
+# Submit KYC Documents
 POST  {{API_BASE_URL_LOCAL}}/kyc/submit-documents
 Authorization:{{API_TOKEN_LOCAL}}
+Content-Type: multipart/form-data
 
 
