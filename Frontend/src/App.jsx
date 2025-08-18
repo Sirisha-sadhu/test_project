@@ -1,43 +1,4 @@
-// import React from 'react';
-// import { BrowserRouter as Router, Routes, Route, createBrowserRouter, RouterProvider } from 'react-router-dom';
-// import Login from './pages/login.jsx';
-// import Home from './pages/Home.jsx';
-// import Register from './pages/Register.jsx';
 
-// function App() {
-  
-//   const routers = createBrowserRouter([
-//   { path: "/", element: <Home /> },
-//   { path: "/login", element: <Login /> },
-//   { path: "/register", element: <Register /> },
-// ]);
-
-//   return (
-//     <RouterProvider router={routers}>
-
-//     </RouterProvider>
-//   );
-    
-// }
-
-// export default App;
-
-
-// import { createBrowserRouter, RouterProvider } from "react-router-dom";
-// import Login from "./pages/Login";
-// import Register from "./pages/Register";
-// import Dashboard from "./pages/Dashboard";
-
-// const router = createBrowserRouter([
-//   { path: "/", element: <Login /> },
-//   { path: "/login", element: <Login /> },
-//   { path: "/register", element: <Register /> },
-//   { path: "/dashboard", element: <Dashboard /> }, // ✅ This is important
-// ]);
-
-// export default function App() {
-//   return <RouterProvider router={router} />;
-// }
 import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Register from "./pages/Register";
