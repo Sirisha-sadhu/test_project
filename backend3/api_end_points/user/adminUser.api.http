@@ -1,0 +1,26 @@
+@API_TOKEN_LOCAL = Bearer 
+@API_BASE_URL_LOCAL = http://localhost:8000/api/v1
+
+
+
+# My Profile
+# GET {{API_BASE_URL_LOCAL}}/admin/user/my-profile
+# Authorization:{{API_TOKEN_LOCAL}}
+
+### Register User
+POST {{API_BASE_URL_LOCAL}}/admin/user/register
+Content-Type: application/json
+
+{
+   "firstName" :"Admin",
+   "lastName" :"User",
+   "email" :"admin@gmail.com",
+   "gender" :"male",
+   "phoneNumber" :"+971504536786",
+   "password" :"Test@123",
+   "confirmPassword" :"Test@123"
+}
+
+
+
+

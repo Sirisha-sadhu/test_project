@@ -2,6 +2,9 @@ const express = require("express");
 const UserRoutes = require("./users/user.routes");
 const OtpRoutes = require("./users/otp.routes");
 const KycRoutes = require("./kyc/kyc.routes");
+
+// admin
+const AdminUserRoutes = require("./users/adminUser.routes");
 const AdminKycRoutes = require("./kyc/adminKyc.routes");
 
 // Route config
@@ -15,6 +18,7 @@ ApiV1Routes.use("/user/otp", OtpRoutes);
 ApiV1Routes.use("/kyc", KycRoutes);
 
 // Admin routes
+ApiV1Routes.use("/admin/user", AdminUserRoutes);
 ApiV1Routes.use("/admin/kyc", AdminKycRoutes);
 
 // export the routes
