@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { user, otp, kyc } = require("../constants/model.constants");
+const { user, kyc } = require("../constants/model.constants");
 
 const ModelSchema = new mongoose.Schema(
   {

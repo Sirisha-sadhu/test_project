@@ -6,5 +6,9 @@
 GET  {{API_BASE_URL_LOCAL}}/admin/kyc/kyc-list
 Authorization:{{API_TOKEN_LOCAL}}
 
+ # kyc detiail
+GET  {{API_BASE_URL_LOCAL}}/admin/kyc/kyc-details/68a2ddc14f7b1476e5888344
+Authorization:{{API_TOKEN_LOCAL}}
+
 
 

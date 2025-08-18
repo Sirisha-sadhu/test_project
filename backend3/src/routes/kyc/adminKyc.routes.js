@@ -7,6 +7,7 @@ const {
 const { rolesConstants } = require("../../constants/index.constants");
 const {
   kycListAdminController,
+  kycDetailsAdminController,
 } = require("../../controllers/kyc/adminKyc.controller");
 
 const AdminKycRoutes = express.Router();
@@ -15,6 +16,12 @@ AdminKycRoutes.route("/kyc-list").get(
   Authentication,
   Authorization(rolesConstants.ADMIN),
   kycListAdminController
+);
+
+AdminKycRoutes.route("/kyc-details/:kycId").get(
+  Authentication,
+  Authorization(rolesConstants.ADMIN),
+  kycDetailsAdminController
 );
 
 module.exports = AdminKycRoutes;

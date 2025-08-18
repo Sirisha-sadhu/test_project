@@ -64,6 +64,33 @@ const kycListAdminController = async (req, res, next) => {
   }
 };
 
+const kycDetailsAdminController = async (req, res, next) => {
+  try {
+    logger.info(
+      "controller - kyc - adminKyc.controller - kycDetailsAdminController - start"
+    );
+    const { kycId } = req.params;
+    const details = await kycModel.findById(kycId).lean();
+    if (!details) return next(httpErrors.NotFound("kyc details not found"));
+
+    responseHandlerUtil.successResponseStandard(res, {
+      message: "Successfully fetched kyc details",
+      data: details,
+    });
+
+    logger.info(
+      "controller - kyc - adminKyc.controller - kycDetailsAdminController - start"
+    );
+  } catch (error) {
+    logger.error(
+      "controller - kyc - adminKyc.controller - kycDetailsAdminController - error",
+      error
+    );
+    errorHandling.handleCustomErrorService(error, next);
+  }
+};
+
 module.exports = {
   kycListAdminController,
+  kycDetailsAdminController,
 };
