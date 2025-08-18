@@ -1,29 +1,48 @@
 import FloatingInput from "@/components/FloatingInput";
 import StepProgress from "@/components/StepProgress";
-import React, { useState } from "react";
+import { sendEmailOtp, verifyEmailOtp } from "@/redux/actions/otpActions";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-const EmailVerify = ({setStep}) => {
+const EmailVerify = ({setStep, user, token}) => {
+    console.log(user?.email)
     const [otpVisible, setOtpVisible] = useState(false);
     const [otp, setOtp] = useState("");
     const [verifyDisabled, setVerifyDisabled] = useState(false);
-
-    const user = JSON.parse(localStorage.getItem("user"));
+    const dispatch = useDispatch();
 
     const navigate = useNavigate();
 
+    const { loading, error, success} = useSelector((state) => state.otp || {});
+
+    useEffect(() => {
+        // Reset error when component mounts
+        if (error) {
+          toast.error(error);
+        }
+        if(success){
+          toast.success("Successfull Email Verification! Redirecting to Mobile verification...");
+        }
+      }, [ error, success]);
+
+
     const handleVerify = () => {
-        setOtpVisible(true);
-        setVerifyDisabled(true);
-        // Here you can trigger your email OTP send logic
-    };
+            dispatch(sendEmailOtp())
+            setOtpVisible(true);
+            setVerifyDisabled(true);
+            // Here you can trigger your email OTP send logic
+     };
 
     const handleOtpSubmit = (e) => {
         e.preventDefault();
         // Handle OTP verification logic here
-        setStep(3); // Assuming step 4 is the next step after email verification
-        alert(`OTP Submitted`);
-        navigate("/verify-phone"); // Navigate to phone verification page
+        dispatch(verifyEmailOtp(otp))
+        .then(() => {
+            setStep(3); // Assuming step 4 is the next step after phone verification
+            navigate("/verify-phone"); // Navigate to KYC page
+        });
+         // Navigate to phone verification page
     };
 
     return (
@@ -33,7 +52,7 @@ const EmailVerify = ({setStep}) => {
                 <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Email Verification</h2>                
                 <form onSubmit={handleOtpSubmit} className="space-y-6">
                     <FloatingInput label="Email" type="email" name="email" value={user?.email}/>
-                    <button
+                    <button type="button"
                         className={`w-full py-2 px-4 rounded bg-blue-600 text-white font-semibold transition-colors duration-200 ${
                         verifyDisabled
                             ? "bg-gray-400 cursor-not-allowed"

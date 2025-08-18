@@ -39,15 +39,15 @@ export default function Login(setIsAuthenticated) {
 
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-indigo-200 ">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-100 to-purple-100 ">
 
       {/* Login Card */}
-      <div className="bg-white/50 backdrop-blur-lg p-8 rounded-2xl shadow-lg w-full max-w-md">
+      <div className="bg-white backdrop-blur-lg p-8 rounded-2xl shadow-lg w-full max-w-md">
         <h1 className="text-2xl font-bold text-center mb-6">
           Welcome Back
         </h1>
 
-        {/* Login Form */}
+        {/* Login Form */} 
         <form onSubmit={handleSubmit} className="space-y-6">
           <FloatingInput
             label="Email"

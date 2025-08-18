@@ -1,19 +1,32 @@
 import FloatingInput from "@/components/FloatingInput";
 import StepProgress from "@/components/StepProgress";
-import { Phone } from "lucide-react";
-import React, { useState } from "react";
+import { sendPhoneOtp, verifyPhoneOtp } from "@/redux/actions/otpActions";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-const PhoneVerify = ({setStep}) => {
-    const [phone, setPhone] = useState("");
+const PhoneVerify = ({setStep, user}) => {
     const [otpVisible, setOtpVisible] = useState(false);
     const [otp, setOtp] = useState("");
     const [verifyDisabled, setVerifyDisabled] = useState(false);
 
-    const user = JSON.parse(localStorage.getItem("user"));
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const { loading, error, success} = useSelector((state) => state.otp || {});
+
+    useEffect(() => {
+        // Reset error when component mounts
+        if (error) {
+          toast.error(error);
+        }
+        if(success){
+          toast.success("Successfull Mobile Verification! Redirecting to KYC verification...");
+        }
+      }, [ error, success]);
 
     const handleVerify = () => {
+        dispatch(sendPhoneOtp())
         setOtpVisible(true);
         setVerifyDisabled(true);
         // Here you can trigger your email OTP send logic
@@ -22,9 +35,11 @@ const PhoneVerify = ({setStep}) => {
     const handleOtpSubmit = (e) => {
         e.preventDefault();
         // Handle OTP verification logic here
-        setStep(4); // Assuming step 4 is the next step after phone verification
-        alert(`OTP Submitted`);
-        navigate("/kyc")
+        dispatch(verifyPhoneOtp(otp))
+        .then(() => {
+            setStep(4); // Assuming step 4 is the next step after phone verification
+            navigate("/kyc"); // Navigate to KYC page
+        });
     };
 
     return (
@@ -34,7 +49,7 @@ const PhoneVerify = ({setStep}) => {
                 <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Phone Verification</h2>                
                 <form onSubmit={handleOtpSubmit} className="space-y-6">
                     <FloatingInput label="Phone" type="tel" name="phoneNumber" value={user?.countryCode +" "+ user?.phoneNumber} placeholder='Phone'/>
-                    <button
+                    <button type="button"
                         className={`w-full py-2 px-4 rounded bg-blue-600 text-white font-semibold transition-colors duration-200 ${
                         verifyDisabled
                             ? "bg-gray-400 cursor-not-allowed"
