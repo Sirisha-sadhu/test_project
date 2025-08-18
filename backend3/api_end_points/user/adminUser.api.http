@@ -21,6 +21,15 @@ Content-Type: application/json
    "confirmPassword" :"Test@123"
 }
 
+### Login User
+POST {{API_BASE_URL_LOCAL}}/admin/user/login
+Content-Type: application/json
+
+{
+   "email" :"test@gmail.com",
+   "password" :"Test@123"
+}
+
 
 
 

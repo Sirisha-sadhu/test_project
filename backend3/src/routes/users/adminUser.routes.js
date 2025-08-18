@@ -13,7 +13,7 @@ const {
 
 const AdminUserRoutes = express.Router();
 
-AdminUserRoutes.route("/register").post(
+AdminUserRoutes.route("/login").post(
   loginUserValidation,
   loginUserAdminController
 );

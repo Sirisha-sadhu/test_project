@@ -1,11 +1,12 @@
 const httpErrors = require("http-errors");
 const userModel = require("../../schema/user.model");
-const USER_CONSTANTS = require("../../constants/user.constants");
 const logger = require("../../config/logger.config");
 const { verifyPasswordMethod } = require("../../utils/verifyPassword.util");
 const { createAccessToken } = require("../../utils/jwtToken.util");
 const errorHandling = require("../../utils/errorHandling.util");
 const responseHandlerUtil = require("../../utils/responseHandler.util");
+const { rolesConstants } = require("../../constants/index.constants");
+const USER_CONSTANTS = require("../../constants/user.constants");
 
 const registerUserController = async (req, res, next) => {
   try {
@@ -105,7 +106,9 @@ const loginUserController = async (req, res, next) => {
 
     const { email, password } = req.body;
 
-    let userExist = await userModel.findOne({ email }).select("+password");
+    let userExist = await userModel
+      .findOne({ email, role: rolesConstants.USER })
+      .select("+password");
 
     // if user exists
     if (!userExist)

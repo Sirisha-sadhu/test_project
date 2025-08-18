@@ -109,7 +109,9 @@ const loginUserAdminController = async (req, res, next) => {
 
     const { email, password } = req.body;
 
-    let userExist = await userModel.findOne({ email }).select("+password");
+    let userExist = await userModel
+      .findOne({ email, role: rolesConstants.ADMIN })
+      .select("+password");
 
     // if user exists
     if (!userExist)
