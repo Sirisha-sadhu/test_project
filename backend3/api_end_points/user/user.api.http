@@ -13,10 +13,10 @@ Content-Type: application/json
 
 {
    "firstName" :"Mohammed",
-   "lastName" :"Shahid",
-   "email" :"test@gmail.com",
+   "lastName" :"Shahid2",
+   "email" :"test2@gmail.com",
    "gender" :"male",
-   "phoneNumber" :"+971504536784",
+   "phoneNumber" :"+971504536785",
    "password" :"Test@123",
    "confirmPassword" :"Test@123"
 }

@@ -24,4 +24,6 @@ module.exports = {
   AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
   AWS_REGION: process.env.AWS_REGION,
   AWS_SES_SENDER: process.env.AWS_SES_SENDER,
+
+  IS_S3_UPLOAD: process.env.IS_S3_UPLOAD ?? false,
 };

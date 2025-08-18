@@ -8,10 +8,10 @@ const DevelopmentLogger = () => {
     format: combine(timestamp(), json(), splat()),
     transports: [
       new transports.Console(),
-      new transports.File({ filename: "app-combined.log" }),
-      new transports.File({ filename: "app-error.log", level: "error" }),
-      new transports.File({ filename: "app-info.log", level: "info" }),
-      new transports.File({ filename: "app-debug.log", level: "debug" }),
+      new transports.File({ filename: "logs/app-combined.log" }),
+      new transports.File({ filename: "logs/app-error.log", level: "error" }),
+      new transports.File({ filename: "logs/app-info.log", level: "info" }),
+      new transports.File({ filename: "logs/app-debug.log", level: "debug" }),
     ],
   });
 };

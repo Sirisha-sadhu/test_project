@@ -1,0 +1,10 @@
+@API_TOKEN_LOCAL = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4OWQ3MWRmNmEyZjYwNTQwMDNkNDllMSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzU1MTQ4NzY3LCJleHAiOjE3NTU0MDc5Njd9.vGC-WwJzndjdxaqRczQ0CzBsX-d_S2aqdpaxxLQvzn4
+@API_BASE_URL_LOCAL = http://localhost:8000/api/v1
+
+
+
+# My Profile
+POST  {{API_BASE_URL_LOCAL}}/kyc/submit-documents
+Authorization:{{API_TOKEN_LOCAL}}
+
+

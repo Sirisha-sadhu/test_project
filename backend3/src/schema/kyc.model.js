@@ -15,6 +15,9 @@ const ModelSchema = new mongoose.Schema(
       url: {
         type: String,
       },
+      fileType: {
+        type: String,
+      },
       size: {
         type: String,
       },
@@ -24,6 +27,9 @@ const ModelSchema = new mongoose.Schema(
         type: String,
       },
       url: {
+        type: String,
+      },
+      fileType: {
         type: String,
       },
       size: {
@@ -37,6 +43,9 @@ const ModelSchema = new mongoose.Schema(
       url: {
         type: String,
       },
+      fileType: {
+        type: String,
+      },
       size: {
         type: String,
       },
@@ -46,6 +55,9 @@ const ModelSchema = new mongoose.Schema(
         type: String,
       },
       url: {
+        type: String,
+      },
+      fileType: {
         type: String,
       },
       size: {
@@ -80,7 +92,6 @@ const ModelSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    passportLast: {},
   },
   { timestamps: true }
 );
