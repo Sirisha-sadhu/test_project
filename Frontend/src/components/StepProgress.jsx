@@ -1,15 +1,16 @@
-import { FaUserPlus, FaSignInAlt, FaIdCard, FaTachometerAlt } from "react-icons/fa";
+import { FaUserPlus, FaEnvelopeSquare, FaIdCard, FaTachometerAlt, FaPhoneAlt } from "react-icons/fa";
 
 export default function StepProgress({ currentStep }) {
   const steps = [
     { label: "Register", icon: <FaUserPlus /> },
-    { label: "Login", icon: <FaSignInAlt /> },
+    { label: "Verify Email", icon: <FaEnvelopeSquare /> },
+    {label: "Verify Phone", icon: <FaPhoneAlt />},
     { label: "KYC", icon: <FaIdCard /> },
     { label: "Dashboard", icon: <FaTachometerAlt /> },
   ];
 
   return (
-    <div className="flex justify-between items-center w-full max-w-2xl mx-auto mb-8">
+    <div className="flex justify-between items-center w-full max-w-2xl mx-auto m-8">
       {steps.map((step, index) => (
         <div key={index} className="flex-1 flex flex-col items-center relative">
           <div

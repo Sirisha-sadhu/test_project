@@ -6,15 +6,15 @@ export default function KYC({ setStep }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setStep(4);
+    setStep(5);
     navigate("/dashboard");
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-400 to-purple-500 flex flex-col items-center p-4">
-      <StepProgress currentStep={3} />
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-200 flex flex-col items-center p-4">
+      <StepProgress currentStep={4} />
       <div className="bg-white/30 backdrop-blur-lg p-8 rounded-2xl shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center text-white mb-6">KYC Verification</h2>
+        <h2 className="text-2xl font-bold text-center mb-6">KYC Verification</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
