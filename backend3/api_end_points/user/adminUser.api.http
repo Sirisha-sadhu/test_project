@@ -9,7 +9,7 @@
 
 
 # Users List
-GET {{API_BASE_URL_LOCAL}}/admin/user/users-list
+GET {{API_BASE_URL_LOCAL}}/admin/user/users-list?email=te
 Authorization:{{API_TOKEN_LOCAL}}
 
 

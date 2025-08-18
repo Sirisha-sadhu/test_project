@@ -74,10 +74,12 @@ const usersListAdminValidation = celebrate({
       .valid("-createdAt", "+createdAt")
       .optional()
       .label("Sort Order"),
+    email: Joi.string().optional().label("email regex"),
     gender: Joi.string()
       .valid("male", "female", "other")
       .optional()
       .label("gender"),
+    isEmailVerified: Joi.boolean().optional().label("isEmailVerified"),
     limit: Joi.number().min(1).optional().label("Limit"),
     page: Joi.number().min(1).optional().label("Page"),
   }),

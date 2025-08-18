@@ -161,10 +161,22 @@ const usersListAdminController = async (req, res, next) => {
   );
 
   let { limit = 15, page = 1, sort = "-createdAt" } = req.query;
-  const { gender } = req.query;
+  const {
+    email,
+    gender,
+    isEmailVerified,
+    isPhoneVerified,
+    isKycDocsUploaded,
+    isKycVerified,
+  } = req.query;
   const query = { role: rolesConstants.USER };
 
   if (gender) query.gender = gender;
+  if (email) query.email = { $regex: email, $options: "i" };
+  if (req.query?.isEmailVerified) query.isEmailVerified = isEmailVerified;
+  if (req.query?.isPhoneVerified) query.isPhoneVerified = isPhoneVerified;
+  if (req.query?.isKycVerified) query.isKycVerified = isKycVerified;
+  if (req.query?.isKycDocsUploaded) query.isKycDocsUploaded = isKycDocsUploaded;
 
   limit = Number(limit);
   page = Number(page);
