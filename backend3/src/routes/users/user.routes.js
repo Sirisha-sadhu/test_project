@@ -2,9 +2,11 @@ const express = require("express");
 const {
   registerUserController,
   myProfileController,
+  loginUserController,
 } = require("../../controllers/user/user.controller");
 const {
   registerUserValidation,
+  loginUserValidation,
 } = require("../../validators/user/user.validation");
 const { Authentication } = require("../../middlewares/auth.middleware");
 
@@ -17,5 +19,5 @@ UserRoutes.route("/register").post(
 
 UserRoutes.route("/my-profile").get(Authentication, myProfileController);
 
+UserRoutes.route("/login").post(loginUserValidation, loginUserController);
 module.exports = UserRoutes;
-// 2025-08-13T11:32:37.877+00:00

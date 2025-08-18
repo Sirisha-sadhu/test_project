@@ -27,7 +27,7 @@ const registerUserController = async (req, res, next) => {
     if (password !== confirmPassword)
       return next(httpErrors.BadRequest(USER_CONSTANTS.CONFIRM_PASSWORD_SAME));
 
-    let userExist = await userModel.findOne({ email: email });
+    let userExist = await userModel.findOne({ email });
 
     // if user exists
     if (userExist)
@@ -97,7 +97,59 @@ const myProfileController = async (req, res, next) => {
   }
 };
 
+const loginUserController = async (req, res, next) => {
+  try {
+    logger.info(
+      "controller - users - user.controller - loginUserController - start"
+    );
+
+    const { email, password } = req.body;
+
+    let userExist = await userModel.findOne({ email }).select("+password");
+
+    // if user exists
+    if (!userExist)
+      return next(httpErrors.BadRequest(USER_CONSTANTS.INVALID_EMAIL_PASSWORD));
+
+    const isPasspwordMatch = await verifyPasswordMethod(
+      password,
+      userExist.password
+    );
+    if (!isPasspwordMatch)
+      return next(httpErrors.BadRequest(USER_CONSTANTS.INVALID_EMAIL_PASSWORD));
+
+    const token = await createAccessToken(
+      userExist?._id.toString(),
+      userExist.role
+    );
+
+    userExist.token = token;
+    await userExist.save();
+
+    const leanUserDetails = userExist.toObject();
+    delete leanUserDetails.password;
+    delete leanUserDetails.token;
+
+    logger.info(
+      "controller - users - user.controller - loginUserController - end"
+    );
+
+    responseHandlerUtil.successResponseStandard(res, {
+      message: USER_CONSTANTS.SUCCESSFULLY_USER_LOGIN,
+      data: leanUserDetails,
+      otherData: { token },
+    });
+  } catch (error) {
+    logger.error(
+      "controller - users - user.controller - loginUserController - error",
+      error
+    );
+    errorHandling.handleCustomErrorService(error, next);
+  }
+};
+
 module.exports = {
   registerUserController,
   myProfileController,
+  loginUserController,
 };
