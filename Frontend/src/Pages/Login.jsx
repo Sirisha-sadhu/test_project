@@ -1,10 +1,10 @@
 import { useState } from "react";
 import StepProgress from "../components/StepProgress";
-import { useNavigate, Link } from "react-router-dom";
+import {  Link } from "react-router-dom";
 import FloatingInput from "@/components/FloatingInput";
 
-export default function Login(setIsAuthenticated) {
-  const navigate = useNavigate();
+export default function Login() {
+  
 
   const [formData, setFormData] = useState({
     email: "",
@@ -28,11 +28,7 @@ export default function Login(setIsAuthenticated) {
       storedUser &&
       storedUser.email === formData.email &&
       storedUser.password === formData.password
-    ) {
-      setIsAuthenticated(true);
-      setStep(3); // Go to KYC
-      navigate("/kyc");
-    } else {
+    ){''} else {
       alert("Invalid email or password!");
     }
   };
@@ -42,9 +38,9 @@ export default function Login(setIsAuthenticated) {
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-indigo-200 ">
 
       {/* Login Card */}
-      <div className="bg-white/50 backdrop-blur-lg p-8 rounded-2xl shadow-lg w-full max-w-md">
+      <div className="bg-white backdrop-blur-lg p-8 rounded-2xl shadow-lg w-full max-w-md">
         <h1 className="text-2xl font-bold text-center mb-6">
-          Welcome Back
+          Welcome BacK
         </h1>
 
         {/* Login Form */}

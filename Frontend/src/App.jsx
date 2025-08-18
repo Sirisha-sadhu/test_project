@@ -38,14 +38,18 @@
 // export default function App() {
 //   return <RouterProvider router={router} />;
 // }
+
+
 import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
-import KYC from "./pages/KYC";
-import Dashboard from "./pages/Dashboard";
+import Register from "./Pages/Register";
+import Login from "./Pages/Login";
+import KYC from "./Pages/KYC";
+import Dashboard from "./Pages/Dashboard";
 import EmailVerify from "./Pages/EmailVerify";
 import PhoneVerify from "./Pages/PhoneVerify";
+import { ToastContainer } from "react-toastify"; // ✅ import ToastContainer
+import "react-toastify/dist/ReactToastify.css";  // ✅ include CSS
 
 export default function App() {
   const [Step, setStep] = useState(1);
@@ -59,9 +63,14 @@ export default function App() {
         <Route path="/register" element={<Register setStep={setStep} setIsAuthenticated={setIsAuthenticated} />} />
         <Route path="/verify-phone" element={<PhoneVerify setStep={setStep}/>} />
         <Route path="/verify-email" element={<EmailVerify setStep={setStep}/>} />
-        <Route path="/kyc" element={<KYC setStep={setStep} />} />
+        {/* <Route path="/kyc" element={<KYC setStep={setStep} />} /> */}
+        <Route path="/kyc" element={<KYC setStep={setStep} setIsAuthenticated={setIsAuthenticated} />} />
+
         <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} />
       </Routes>
+      <ToastContainer position="top-center" autoClose={1500} />
+
     </Router>
   );
 }
+

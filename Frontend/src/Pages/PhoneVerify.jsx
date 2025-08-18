@@ -5,12 +5,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const PhoneVerify = ({setStep}) => {
-    const [phone, setPhone] = useState("");
+    //const [phone, setPhone] = useState("");
+     const user = JSON.parse(localStorage.getItem("user"));
+    const [phone, setPhone] = useState(user?.countryCode + " " + (user?.phoneNumber || ""));
     const [otpVisible, setOtpVisible] = useState(false);
     const [otp, setOtp] = useState("");
     const [verifyDisabled, setVerifyDisabled] = useState(false);
 
-    const user = JSON.parse(localStorage.getItem("user"));
+    // const user = JSON.parse(localStorage.getItem("user"));
     const navigate = useNavigate();
 
     const handleVerify = () => {
@@ -33,8 +35,16 @@ const PhoneVerify = ({setStep}) => {
             <div className="w-full max-w-lg bg-white rounded-2xl shadow-lg p-8 mt-4">
                 <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Phone Verification</h2>                
                 <form onSubmit={handleOtpSubmit} className="space-y-6">
-                    <FloatingInput label="Phone" type="tel" name="phoneNumber" value={user?.countryCode +" "+ user?.phoneNumber} placeholder='Phone'/>
-                    <button
+                    {/* <FloatingInput label="Phone" type="tel" name="phoneNumber" value={user?.countryCode +" "+ user?.phoneNumber} placeholder='Phone'/> */}
+                    <FloatingInput
+  label="Phone"
+  type="tel"
+  name="phoneNumber"
+  value={phone}
+  onChange={(e) => setPhone(e.target.value)}
+  placeholder="Phone"
+/>
+                    <button type="button"
                         className={`w-full py-2 px-4 rounded bg-blue-600 text-white font-semibold transition-colors duration-200 ${
                         verifyDisabled
                             ? "bg-gray-400 cursor-not-allowed"

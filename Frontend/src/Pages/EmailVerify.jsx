@@ -33,7 +33,7 @@ const EmailVerify = ({setStep}) => {
                 <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Email Verification</h2>                
                 <form onSubmit={handleOtpSubmit} className="space-y-6">
                     <FloatingInput label="Email" type="email" name="email" value={user?.email}/>
-                    <button
+                    <button type="button"
                         className={`w-full py-2 px-4 rounded bg-blue-600 text-white font-semibold transition-colors duration-200 ${
                         verifyDisabled
                             ? "bg-gray-400 cursor-not-allowed"
