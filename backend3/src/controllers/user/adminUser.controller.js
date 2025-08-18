@@ -156,59 +156,71 @@ const loginUserAdminController = async (req, res, next) => {
 };
 
 const usersListAdminController = async (req, res, next) => {
-  logger.info(
-    "controller - users - adminUser.controller - usersListAdminController - start"
-  );
+  try {
+    logger.info(
+      "controller - users - adminUser.controller - usersListAdminController - start"
+    );
 
-  let { limit = 15, page = 1, sort = "-createdAt" } = req.query;
-  const {
-    email,
-    gender,
-    isEmailVerified,
-    isPhoneVerified,
-    isKycDocsUploaded,
-    isKycVerified,
-  } = req.query;
-  const query = { role: rolesConstants.USER };
+    let { limit = 15, page = 1, sort = "-createdAt" } = req.query;
+    const {
+      email,
+      gender,
+      isEmailVerified,
+      isPhoneVerified,
+      isKycDocsUploaded,
+      isKycVerified,
+    } = req.query;
+    const query = { role: rolesConstants.USER };
 
-  if (gender) query.gender = gender;
-  if (email) query.email = { $regex: email, $options: "i" };
-  if (req.query?.isEmailVerified) query.isEmailVerified = isEmailVerified;
-  if (req.query?.isPhoneVerified) query.isPhoneVerified = isPhoneVerified;
-  if (req.query?.isKycVerified) query.isKycVerified = isKycVerified;
-  if (req.query?.isKycDocsUploaded) query.isKycDocsUploaded = isKycDocsUploaded;
+    if (gender) query.gender = gender;
+    if (email) query.email = { $regex: email, $options: "i" };
+    if (req.query?.isEmailVerified) query.isEmailVerified = isEmailVerified;
+    if (req.query?.isPhoneVerified) query.isPhoneVerified = isPhoneVerified;
+    if (req.query?.isKycVerified) query.isKycVerified = isKycVerified;
+    if (req.query?.isKycDocsUploaded)
+      query.isKycDocsUploaded = isKycDocsUploaded;
 
-  limit = Number(limit);
-  page = Number(page);
+    limit = Number(limit);
+    page = Number(page);
 
-  const skip_docs = (page - 1) * limit;
+    const skip_docs = (page - 1) * limit;
 
-  const totalDocs = await userModel.countDocuments(query);
-  const totalPages = Math.ceil(totalDocs / limit);
+    const totalDocs = await userModel.countDocuments(query);
+    const totalPages = Math.ceil(totalDocs / limit);
 
-  const docs = await userModel
-    .find(query)
-    .skip(skip_docs)
-    .limit(limit)
-    .sort(sortConstants[sort] || sortConstants["-createdAt"]);
+    const docs = await userModel
+      .find(query)
+      .skip(skip_docs)
+      .limit(limit)
+      .sort(sortConstants[sort] || sortConstants["-createdAt"]);
 
-  const hasNext = totalDocs > skip_docs + limit;
-  const hasPrev = page > 1;
+    const hasNext = totalDocs > skip_docs + limit;
+    const hasPrev = page > 1;
 
-  const data = {
-    totalDocs,
-    totalPages,
-    docs,
-    currentPage: page,
-    hasNext,
-    hasPrev,
-    limit,
-  };
+    const data = {
+      totalDocs,
+      totalPages,
+      docs,
+      currentPage: page,
+      hasNext,
+      hasPrev,
+      limit,
+    };
 
-  responseHandlerUtil.successResponseStandard(res, {
-    message: "Successfully users list fetched",
-    data,
-  });
+    logger.info(
+      "controller - users - adminUser.controller - usersListAdminController - end"
+    );
+    responseHandlerUtil.successResponseStandard(res, {
+      message: "Successfully users list fetched",
+      data,
+    });
+  } catch (error) {
+    logger.error(
+      "controller - users - adminUser.controller - usersListAdminController - error",
+      error
+    );
+    errorHandling.handleCustomErrorService(error, next);
+  }
 };
 
 module.exports = {
