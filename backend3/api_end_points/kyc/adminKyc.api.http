@@ -2,18 +2,9 @@
 @API_BASE_URL_LOCAL = http://localhost:8000/api/v1
 
 
-
-# My KYC Details
-GET  {{API_BASE_URL_LOCAL}}/kyc/kyc-details
+# kyc list
+GET  {{API_BASE_URL_LOCAL}}/admin/kyc/kyc-list
 Authorization:{{API_TOKEN_LOCAL}}
-
-# Submit KYC Documents
-POST  {{API_BASE_URL_LOCAL}}/kyc/submit-documents
-Authorization:{{API_TOKEN_LOCAL}}
-Content-Type: multipart/form-data
-
-
-
 
 
 

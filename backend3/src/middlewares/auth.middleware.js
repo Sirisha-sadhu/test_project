@@ -16,7 +16,6 @@ const {
   AUTHENTICATION_TOKEN_REQUIRED,
   AUTHORIZATION_REQUIRED,
 } = require("../constants/auth.constants");
-const { rolesConstants } = require("../constants/index.constants");
 
 // authentication middleware
 module.exports.Authentication = async (req, res, next) => {
@@ -58,7 +57,6 @@ module.exports.Authentication = async (req, res, next) => {
 module.exports.Authorization = (...roles) => {
   return (req, res, next) => {
     const userRole = req.role;
-    const roles = Object.values(rolesConstants);
     if (!roles.includes(userRole)) {
       return next(httpErrors.Unauthorized(AUTHORIZATION_REQUIRED));
     }

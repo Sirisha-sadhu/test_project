@@ -7,7 +7,6 @@ const logger = require("../../config/logger.config");
 const errorHandling = require("../../utils/errorHandling.util");
 const responseHandlerUtil = require("../../utils/responseHandler.util");
 const { IS_S3_UPLOAD } = require("../../config/index.config");
-const { CompletelyUserVerified } = require("../../middlewares/auth.middleware");
 
 const submitKycController = async (req, res, next) => {
   try {
@@ -109,6 +108,5 @@ const myKycDetailsController = async (req, res, next) => {
 
 module.exports = {
   submitKycController,
-  CompletelyUserVerified,
   myKycDetailsController,
 };
