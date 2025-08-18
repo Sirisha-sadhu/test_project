@@ -1,29 +1,49 @@
 import FloatingInput from "@/components/FloatingInput";
 import StepProgress from "@/components/StepProgress";
-import React, { useState } from "react";
+import { sendEmailOtp, verifyEmailOtp } from "@/redux/actions/otpActions";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-const EmailVerify = ({setStep}) => {
+const EmailVerify = ({setStep, user}) => {
+    console.log(user?.email)
     const [otpVisible, setOtpVisible] = useState(false);
     const [otp, setOtp] = useState("");
     const [verifyDisabled, setVerifyDisabled] = useState(false);
-
-    const user = JSON.parse(localStorage.getItem("user"));
+    const dispatch = useDispatch();
 
     const navigate = useNavigate();
 
+    const { error, success} = useSelector((state) => state.otp || {});
+
+    useEffect(() => {
+        // Reset error when component mounts
+        if (error) {
+          toast.error(error);
+        }
+        if(success){
+          toast.success("Successfull Email Verification! Redirecting to Mobile verification...");
+        }
+      }, [ error, success]);
+
+
     const handleVerify = () => {
-        setOtpVisible(true);
-        setVerifyDisabled(true);
-        // Here you can trigger your email OTP send logic
-    };
+            dispatch(sendEmailOtp())
+            setOtpVisible(true);
+            setVerifyDisabled(true);
+            // Here you can trigger your email OTP send logic
+     };
 
     const handleOtpSubmit = (e) => {
         e.preventDefault();
         // Handle OTP verification logic here
-        setStep(3); // Assuming step 4 is the next step after email verification
-        alert(`OTP Submitted`);
-        navigate("/verify-phone"); // Navigate to phone verification page
+        dispatch(verifyEmailOtp(otp))
+        .then(() => {
+            setStep(3); // Assuming step 4 is the next step after phone verification
+            navigate("/verify-phone"); // Navigate to KYC page
+        });
+         // Navigate to phone verification page
     };
 
     return (

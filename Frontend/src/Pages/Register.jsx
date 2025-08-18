@@ -5,7 +5,8 @@ import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../redux/actions/registerActions";
 import PasswordRules from "@/components/passwordRules";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 // ✅ Reusable Floating Input with Formik + "value-aware" floating label
 const FloatingInput = ({ label, type, name, value, ...props }) => {
@@ -54,7 +55,7 @@ const RegisterSchema = Yup.object().shape({
   gender: Yup.string().required("Gender is required"),
   countryCode: Yup.string().required("Country code is required"),
   phoneNumber: Yup.string()
-    .matches(/^[0-9]{10,15}$/, "Phone number must be 10–15 digits")
+    .matches(/^[0-9]{10,15}$/, "Phone number must be 10 digits")
     .required("Phone number is required"),
   email: Yup.string()
     .email("Invalid email address")
@@ -78,10 +79,21 @@ export default function Register({ setStep }) {
 
 
   // Optional: Get loading/error states from Redux
-  const { loading, error } = useSelector((state) => state.register || {});
+  const { loading, error, success} = useSelector((state) => state.register || {});
+  console.log("Register page userInfo:", success, loading, error);
+
+  useEffect(() => {
+    // Reset error when component mounts
+    if (error) {
+      toast.error(error);
+    }
+    if(success){
+      toast.success("Registration successful! Redirecting to email verification...");
+    }
+  }, [ error, success]);
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-blue-100 to-purple-200 px-4 py-6">
+    <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 px-4 py-6">
       <StepProgress currentStep={1} />
       <div className="w-full max-w-lg bg-white rounded-2xl shadow-lg p-8 mt-4">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">

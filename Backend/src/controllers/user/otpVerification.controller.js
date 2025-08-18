@@ -18,6 +18,7 @@ const { generateOTP, sendOTPPhone } = require("../../utils/otpGenerator.util");
 
 //aws mail service
 const AwsMailServiceClass = require("../../aws/mails/mail.ses");
+const { otp } = require("../../constants/model.constants");
 
 
 const sendEmailOTPVerficationController = async (req, res, next) => {
@@ -40,7 +41,7 @@ const sendEmailOTPVerficationController = async (req, res, next) => {
       .lean();
     let otpDetails = null;
 
-    if (isOtpExist && isOtpExist.count >= 3) {
+    if (isOtpExist && isOtpExist.count >= 8) { 
       if (!isOtpExist?.limitCompleted) {
         await otpModel.findByIdAndUpdate(isOtpExist._id, {
           limitCompleted: true,
@@ -66,6 +67,7 @@ const sendEmailOTPVerficationController = async (req, res, next) => {
       );
     } else {
       const otp = generateOTP();
+      console.log("Generated OTP:", otp);
       otpDetails = new otpModel({
         user: req.user._id,
         email: req.user.email,
@@ -140,14 +142,14 @@ const verifyEmailOTPController = async (req, res, next) => {
     }
 
     await otpModel.findByIdAndDelete(isOtpExist._id);
-    await userModel.findByIdAndUpdate(req.user._id, { isEmailVerified: true });
+    await userModel.findByIdAndUpdate(req.user._id, { emailVerified: true });
 
     logger.info(
       "controller - users - otpVerfication.controller - verifyRegisterUserEmailOTPController - end"
     );
 
     responseHandlerUtil.successResponseStandard(res, {
-      message: "OTP verified successfully.",
+      message: " Email is verified successfully.",
     });
   } catch (error) {
     logger.error(
@@ -163,28 +165,66 @@ const sendPhoneOTPVerficationController = async (req, res, next) => {
     logger.info(
       "controller - users - otpVerfication.controller - sendPhoneOTPVerficationController - start"
     );
-    const { phoneNumber } = req.body;
+    
+    if (req.user.isPhoneVerified) {
+      return responseHandlerUtil.successResponseStandard(res, {
+        message: "Phone number is already verified.",
+      });
+    }
 
-    const otp = await sendOTPPhone(phoneNumber);
+    const isOtpExist = await otpModel
+      .findOne({  user: req.user._id, type: 'phone' })
+      .lean();
+    
+    let otpDetail = null;
+
+    if (isOtpExist && isOtpExist.count >= 8) {
+      if (!isOtpExist?.limitCompleted) { 
+        await otpModel.findByIdAndUpdate(isOtpExist._id, {
+          limitCompleted: true,
+          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), //24 hours
+        });
+      }
+      return next(
+        httpErrors.TooManyRequests(
+          "Too many attempts. Please try again after 24 hours."
+        )
+      );
+    } else if (isOtpExist) {
+      const otp = generateOTP();  
+      otpDetail = await otpModel.findByIdAndUpdate(
+        isOtpExist._id,
+        {
+          otp,
+          $inc: { count: 1 },
+          expiresAt: new Date(Date.now() + 5 * 60 * 1000), //5 minutes
+        },
+        { new: true }
+      );
+    } else {  
+      const otp = generateOTP();
+      console.log("Generated OTP:", otp);
+      otpDetail = new otpModel({
+        user: req.user._id,
+        phoneNumber: req.user.countryCode + " " + req.user.phoneNumber ,
+        otp,
+        type: 'phone',
+      });
+      await otpDetail.save();
+    }
+
+    console.log("OTP Details:", otpDetail);
+
+    const sendOTP = await sendOTPPhone(otpDetail.phoneNumber);
 
     console.log("Generated OTP:", otp);
-
-    const otpDetails = new otpModel({
-      user: req.user._id,
-      type: 'phone', 
-      phoneNumber: phoneNumber,
-      otp,
-    });
-    await otpDetails.save();
 
     logger.info(
       "controller - users - otpVerfication.controller - phoneOTPVerficationController - end"
     );
 
     responseHandlerUtil.successResponseStandard(res, {
-          success: true,
-          statusCode: 200,
-          message: USER_CONSTANTS.SUCCESSFULL_OPT_SENT,
+          message: 'otp sent successfully to the phone number',
         });
   } catch (error) {
     logger.error(
@@ -206,18 +246,38 @@ const verifyPhoneOTPController = async (req, res, next) => {
       user: req.user._id,
       otp,
       type: 'phone',
-    });
+    }).lean();
 
-    if (!otpDetails) {
-      return next(httpErrors.BadRequest(USER_CONSTANTS.INVALID_OTP));
+
+    if (!otpDetails || otpDetails.expiresAt < new Date()) {
+      return next(httpErrors. NotFound("OTP has expired or is invalid. Please request a new one."));
     }
 
-    if (otpDetails.expiresAt < new Date()) {
-      return responseHandlerUtil.errorResponseStandard(res, {
-        message: "OTP has expired",
-        statusCode: 400,
+    if (otpDetails.limitCompleted) {
+      return next(
+        httpErrors.TooManyRequests(
+          "Too many attempts. Please try again after 24 hours."
+        )
+      );
+    }
+
+    if (otpDetails.verifyAttempts >= 3) {
+      return next(
+        httpErrors.TooManyRequests(
+          "Maximum OTP verification attempts exceeded. Request a new OTP."
+        )
+      );
+    }
+    // Check if OTP matches
+    if (otpDetails.otp !== otp) {
+      await otpModel.findByIdAndUpdate(otpDetails._id, {
+        $inc: { verifyAttempts: 1 },
       });
+      return next(httpErrors.BadRequest("Invalid OTP."));
     }
+    await otpModel.findByIdAndDelete(otpDetails._id);
+    await userModel.findByIdAndUpdate(req.user._id, { phoneVerified: true });
+
 
      logger.info(
       "controller - users - otpVerfication.controller - verifyPhoneOTPController - end"
@@ -225,9 +285,8 @@ const verifyPhoneOTPController = async (req, res, next) => {
 
     // OTP is valid, proceed with further actions
     responseHandlerUtil.successResponseStandard(res, {
-      message: "OTP verified successfully",
+      message: "Phone Number is verified successfully",
     });
-
   }
 
   catch (error) {

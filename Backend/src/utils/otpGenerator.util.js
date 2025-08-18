@@ -6,7 +6,7 @@ const { send } = require('process');
 // Generate a random 6-digit OTP
 const generateOTP = () => {
   // generate a otp of 4digit number
-  const otp = crypto.randomInt(1000, 9999);
+  const otp = crypto.randomInt(100000, 999999);
   return otp;
 };
 
@@ -58,4 +58,4 @@ const sendOTPPhone = async (phoneNumber) => {
     return phoneOtp; // Return OTP for further verification
 }
 
-module.exports = { sendOTPEmail, sendOTPPhone };
+module.exports = { sendOTPEmail, sendOTPPhone, generateOTP };

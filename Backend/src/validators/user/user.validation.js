@@ -3,7 +3,7 @@ const { celebrate, Joi, Segments } = require('celebrate');
 const registerValidation = celebrate({
     [Segments.BODY]: Joi.object().keys({
         firstName: Joi.string()
-            .min(4)
+            .min(3)
             .max(20)
             .required()
             .messages({
@@ -11,7 +11,7 @@ const registerValidation = celebrate({
                 'string.max': 'First name must not exceed 20 characters.',
             }),
         lastName: Joi.string()
-            .min(4)
+            .min(3)
             .max(20)
             .required()
             .messages({
