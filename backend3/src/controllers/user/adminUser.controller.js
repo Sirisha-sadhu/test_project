@@ -7,6 +7,7 @@ const { createAccessToken } = require("../../utils/jwtToken.util");
 const errorHandling = require("../../utils/errorHandling.util");
 const responseHandlerUtil = require("../../utils/responseHandler.util");
 const { rolesConstants } = require("../../constants/index.constants");
+const sortConstants = require("../../constants/sort.constants");
 
 const registerAdminUserController = async (req, res, next) => {
   try {
@@ -154,8 +155,53 @@ const loginUserAdminController = async (req, res, next) => {
   }
 };
 
+const usersListAdminController = async (req, res, next) => {
+  logger.info(
+    "controller - users - adminUser.controller - usersListAdminController - start"
+  );
+
+  let { limit = 15, page = 1, sort = "-createdAt" } = req.query;
+  const { gender } = req.query;
+  const query = { role: rolesConstants.USER };
+
+  if (gender) query.gender = gender;
+
+  limit = Number(limit);
+  page = Number(page);
+
+  const skip_docs = (page - 1) * limit;
+
+  const totalDocs = await userModel.countDocuments(query);
+  const totalPages = Math.ceil(totalDocs / limit);
+
+  const docs = await userModel
+    .find(query)
+    .skip(skip_docs)
+    .limit(limit)
+    .sort(sortConstants[sort] || sortConstants["-createdAt"]);
+
+  const hasNext = totalDocs > skip_docs + limit;
+  const hasPrev = page > 1;
+
+  const data = {
+    totalDocs,
+    totalPages,
+    docs,
+    currentPage: page,
+    hasNext,
+    hasPrev,
+    limit,
+  };
+
+  responseHandlerUtil.successResponseStandard(res, {
+    message: "Successfully users list fetched",
+    data,
+  });
+};
+
 module.exports = {
   registerAdminUserController,
   myProfileAdminController,
   loginUserAdminController,
+  usersListAdminController,
 };

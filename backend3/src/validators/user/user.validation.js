@@ -68,8 +68,24 @@ const loginUserValidation = celebrate({
     .label("body"),
 });
 
+const usersListAdminValidation = celebrate({
+  query: Joi.object({
+    sort: Joi.string()
+      .valid("-createdAt", "+createdAt")
+      .optional()
+      .label("Sort Order"),
+    gender: Joi.string()
+      .valid("male", "female", "other")
+      .optional()
+      .label("gender"),
+    limit: Joi.number().min(1).optional().label("Limit"),
+    page: Joi.number().min(1).optional().label("Page"),
+  }),
+});
+
 module.exports = {
   registerUserValidation,
   verifyRegisterUserOTPValidation,
   loginUserValidation,
+  usersListAdminValidation,
 };
