@@ -1,11 +1,11 @@
-@API_TOKEN_LOCAL = Bearer 
+@API_TOKEN_LOCAL = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4YTJmNTJmZDExMzZkMzFiNmYzYzM5NCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1NTUxMDA2MywiZXhwIjoxNzU1NzY5MjYzfQ.dFeju_DJMZJzkC6fR1dzmjtkl9DkFXuBcfFI0lDy0zI
 @API_BASE_URL_LOCAL = http://localhost:8000/api/v1
 
 
 
 # My Profile
-# GET {{API_BASE_URL_LOCAL}}/admin/user/my-profile
-# Authorization:{{API_TOKEN_LOCAL}}
+GET {{API_BASE_URL_LOCAL}}/admin/user/my-profile
+Authorization:{{API_TOKEN_LOCAL}}
 
 ### Register User
 POST {{API_BASE_URL_LOCAL}}/admin/user/register

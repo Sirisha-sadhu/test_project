@@ -78,6 +78,82 @@ const registerAdminUserController = async (req, res, next) => {
   }
 };
 
+const myProfileAdminController = async (req, res, next) => {
+  try {
+    logger.info(
+      "controller - users - adminUser.controller - myProfileAdminController - start"
+    );
+    const details = await userModel.findById(req.user._id).lean();
+
+    logger.info(
+      "controller - users - adminUser.controller - myProfileAdminController - end"
+    );
+    responseHandlerUtil.successResponseStandard(res, {
+      message: "successfully user details fetched",
+      data: details,
+    });
+  } catch (error) {
+    logger.error(
+      "controller - users - adminUser.controller - myProfileAdminController - error",
+      error
+    );
+    errorHandling.handleCustomErrorService(error, next);
+  }
+};
+
+const loginUserAdminController = async (req, res, next) => {
+  try {
+    logger.info(
+      "controller - users - adminUser.controller - loginUserAdminController - start"
+    );
+
+    const { email, password } = req.body;
+
+    let userExist = await userModel.findOne({ email }).select("+password");
+
+    // if user exists
+    if (!userExist)
+      return next(httpErrors.BadRequest(USER_CONSTANTS.INVALID_EMAIL_PASSWORD));
+
+    const isPasspwordMatch = await verifyPasswordMethod(
+      password,
+      userExist.password
+    );
+    if (!isPasspwordMatch)
+      return next(httpErrors.BadRequest(USER_CONSTANTS.INVALID_EMAIL_PASSWORD));
+
+    const token = await createAccessToken(
+      userExist?._id.toString(),
+      userExist.role
+    );
+
+    userExist.token = token;
+    await userExist.save();
+
+    const leanUserDetails = userExist.toObject();
+    delete leanUserDetails.password;
+    delete leanUserDetails.token;
+
+    logger.info(
+      "controller - users - adminUser.controller - loginUserAdminController - end"
+    );
+
+    responseHandlerUtil.successResponseStandard(res, {
+      message: USER_CONSTANTS.SUCCESSFULLY_USER_LOGIN,
+      data: leanUserDetails,
+      otherData: { token },
+    });
+  } catch (error) {
+    logger.error(
+      "controller - users - adminUser.controller - loginUserAdminController - error",
+      error
+    );
+    errorHandling.handleCustomErrorService(error, next);
+  }
+};
+
 module.exports = {
   registerAdminUserController,
+  myProfileAdminController,
+  loginUserAdminController,
 };
