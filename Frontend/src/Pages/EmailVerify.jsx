@@ -23,9 +23,11 @@ const EmailVerify = ({setStep, user}) => {
           toast.error(error);
         }
         if(success){
-          toast.success("Successfull Email Verification! Redirecting to Mobile verification...");
+            toast.success("Successfull Email Verification! Redirecting to Mobile verification...");
+            navigate("/verify-phone");
+            setStep(3);
         }
-      }, [ error, success]);
+      }, [ error, success, navigate, setStep]);
 
 
     const handleVerify = () => {
@@ -39,10 +41,6 @@ const EmailVerify = ({setStep, user}) => {
         e.preventDefault();
         // Handle OTP verification logic here
         dispatch(verifyEmailOtp(otp))
-        .then(() => {
-            setStep(3); // Assuming step 4 is the next step after phone verification
-            navigate("/verify-phone"); // Navigate to KYC page
-        });
          // Navigate to phone verification page
     };
 

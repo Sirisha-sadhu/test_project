@@ -27,6 +27,6 @@ OtpRoutes.route("/verify-email").post(
 
 // Phone OTP verification routes
 OtpRoutes.route("/send-otp-phone").get(Authentication, sendPhoneOTPVerficationController);
-OtpRoutes.route("/verify-otp-phone").post(Authentication, verifyPhoneOTPController);
+OtpRoutes.route("/verify-otp-phone").post(Authentication,verifyOTPValidation, verifyPhoneOTPController);
 
 module.exports = OtpRoutes;
