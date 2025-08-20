@@ -8,9 +8,6 @@ const USER_CONSTANTS = require("../../constants/user.constants");
 //config
 const logger = require("../../config/logger.config");
 
-// const { verifyPasswordMethod } = require("../../utils/verifyPassword.util");
-// const { createAccessToken } = require("../../utils/jwtToken.util");
-
 //utils
 const errorHandling = require("../../utils/errorHandling.util");
 const responseHandlerUtil = require("../../utils/responseHandler.util");
@@ -18,6 +15,7 @@ const { generateOTP, sendOTPPhone } = require("../../utils/otpGenerator.util");
 
 //aws mail service
 const AwsMailServiceClass = require("../../aws/mails/mail.ses");
+const NodeMailerServiceClass = require('../../aws/mails/mail.nodemailer')
 const { otp } = require("../../constants/model.constants");
 
 
@@ -39,6 +37,7 @@ const sendEmailOTPVerficationController = async (req, res, next) => {
         type: "email",
       })
       .lean();
+      
     let otpDetails = null;
 
     if (isOtpExist && isOtpExist.count >= 8) { 
@@ -77,11 +76,17 @@ const sendEmailOTPVerficationController = async (req, res, next) => {
       await otpDetails.save();
     }
 
-    const awsMailServiceClass = new AwsMailServiceClass();
+    console.log(req.user)
+
+    //const awsMailServiceClass = new AwsMailServiceClass();
+    const nodeMailerServiceClass = new NodeMailerServiceClass()
     let mailDetails = {
-      user_name: otpDetails.name,
+      user_name: req.user.firstName,
       user_email: otpDetails.email,
+      otp: otpDetails.otp
     };
+
+    await nodeMailerServiceClass.sendMail(otpDetails.email, "welcomeRegistrationTemplate", null, mailDetails);
 
     logger.info(
       "controller - users - otpVerfication.controller - sendRegisterUserEmailOTPController - end"
@@ -142,14 +147,16 @@ const verifyEmailOTPController = async (req, res, next) => {
     }
 
     await otpModel.findByIdAndDelete(isOtpExist._id);
-    await userModel.findByIdAndUpdate(req.user._id, { emailVerified: true });
+    const user = await userModel.findByIdAndUpdate(req.user._id, { emailVerified: true }, {new: true});
 
     logger.info(
       "controller - users - otpVerfication.controller - verifyRegisterUserEmailOTPController - end"
     );
 
     responseHandlerUtil.successResponseStandard(res, {
+      success: true,
       message: " Email is verified successfully.",
+      data: user
     });
   } catch (error) {
     logger.error(
@@ -276,7 +283,7 @@ const verifyPhoneOTPController = async (req, res, next) => {
       return next(httpErrors.BadRequest("Invalid OTP."));
     }
     await otpModel.findByIdAndDelete(otpDetails._id);
-    await userModel.findByIdAndUpdate(req.user._id, { phoneVerified: true });
+    const user = await userModel.findByIdAndUpdate(req.user._id, { phoneVerified: true }, {new: true});
 
 
      logger.info(
@@ -285,7 +292,9 @@ const verifyPhoneOTPController = async (req, res, next) => {
 
     // OTP is valid, proceed with further actions
     responseHandlerUtil.successResponseStandard(res, {
+      success:true,
       message: "Phone Number is verified successfully",
+      data: user
     });
   }
 

@@ -1,25 +1,64 @@
 const httpErrors = require("http-errors");
-const userModel = require("../../../../backend3/src/schema/user.model");
-const USER_CONSTANTS = require("../../../../backend3/src/constants/user.constants");
-const logger = require("../../../../backend3/src/config/logger.config");
-const { verifyPasswordMethod } = require("../../../../backend3/src/utils/verifyPassword.util");
-const { createAccessToken } = require("../../../../backend3/src/utils/jwtToken.util");
-const errorHandling = require("../../../../backend3/src/utils/errorHandling.util");
-const responseHandlerUtil = require("../../../../backend3/src/utils/responseHandler.util");
+
+// models0
+const userModel = require("../../schema/user.model");
+const kycModel = require("../../schema/kyc.model");
+
+const logger = require("../../config/logger.config");
+
+const errorHandling = require("../../utils/errorHandling.util");
+const responseHandlerUtil = require("../../utils/responseHandler.util");
+const { AWS_S3_UPLOAD } = require("../../config/index.config");
 
 const submitKycController = async (req, res, next) => {
   try {
     logger.info(
       "controller - kyc - kyc.controller - submitKycController - start"
     );
-    const details = await userModel.findById(req.user._id).lean();
+
+    console.log(req.files)
+
+    const {passportFront, passportBack, emirates} = req.files;
+
+    if (!passportFront || !passportBack || !emirates) {
+      return next(httpErrors.BadRequest("All KYC documents are required."));
+    }
+
+    const userKyc = await kycModel.findOne({ userId: req.user._id });
+    if (userKyc) {
+      return next(
+        httpErrors.BadRequest(
+          "You have already submitted your KYC details."
+        )
+      );
+    }
+
+    const buildFileData = (file) => {
+      if (!file) return null;
+      return {
+        fileName: file.originalname,
+        url: file.location || file.path, // S3 -> location, Local -> path
+        size: `${file.size} bytes`,
+      };
+    };
+
+    const newKyc = new kycModel({
+      user: req.user._id,
+      emirates: buildFileData(req.files?.emirates?.[0]),
+      passportFront: buildFileData(req.files?.passportFront?.[0]),
+      passportBack: buildFileData(req.files?.passportBack?.[0]),
+      residenceAddress: buildFileData(req.files?.residenceAddress?.[0]),
+      kycStatus: "pending"
+    });
+
+    const user = await userModel.findByIdAndUpdate( req.user._id,{ isKycVerified: true, isKycDocsUploaded: true });
 
     logger.info(
       "controller - kyc - kyc.controller - submitKycController - end"
     );
     responseHandlerUtil.successResponseStandard(res, {
       message: "successfully user details fetched",
-      data: details,
+      data: user,
     });
   } catch (error) {
     logger.error(

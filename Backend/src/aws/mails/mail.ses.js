@@ -128,3 +128,5 @@ class AwsMailServiceClass {
 }
 
 module.exports = AwsMailServiceClass;
+
+

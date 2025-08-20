@@ -9,7 +9,7 @@ const loginReducer = (state = initialState, action) => {
         case 'USER_LOGIN_REQUEST':
             return { ...state, loading: true, error: null };
         case 'USER_LOGIN_SUCCESS':
-            return { ...state, loading: false, userInfo: action.payload, error: null };
+            return { ...state, loading: false, error: null };
         case 'USER_LOGIN_FAIL':
             return { ...state, loading: false, error: action.payload };
         case 'USER_LOGOUT':
@@ -18,5 +18,6 @@ const loginReducer = (state = initialState, action) => {
             return state;
     }
 };
+
 
 export default loginReducer;

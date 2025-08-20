@@ -4,9 +4,10 @@ import { sendEmailOtp, verifyEmailOtp } from "@/redux/actions/otpActions";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const EmailVerify = ({setStep, user, token}) => {
-    console.log(user?.email)
+    console.log("email verify ",user)
     const [otpVisible, setOtpVisible] = useState(false);
     const [otp, setOtp] = useState("");
     const [verifyDisabled, setVerifyDisabled] = useState(false);
@@ -14,21 +15,29 @@ const EmailVerify = ({setStep, user, token}) => {
 
     const navigate = useNavigate();
 
-    const { loading, error, success} = useSelector((state) => state.otp || {});
+    const { error, verified} = useSelector((state) => state.otp || {});
 
     useEffect(() => {
         // Reset error when component mounts
         if (error) {
-          toast.error(error);
+            toast.error(error);
         }
-        if(success){
-          toast.success("Successfull Email Verification! Redirecting to Mobile verification...");
+        if(verified){
+            toast.success("Successfull Email Verification! Redirecting to Mobile verification...");
+            navigate("/verify-phone"); 
+            setStep(3);
+            dispatch({type: 'RESET_OTP_STATE'})
+             // Assuming step 4 is the next step after phone verification
+            
         }
-      }, [ error, success]);
+      }, [ error, verified, setStep, navigate, dispatch]);
 
 
     const handleVerify = () => {
             dispatch(sendEmailOtp())
+            .then(() => {
+                toast.update("OTP sent to your email!");
+            })
             setOtpVisible(true);
             setVerifyDisabled(true);
             // Here you can trigger your email OTP send logic
@@ -38,10 +47,6 @@ const EmailVerify = ({setStep, user, token}) => {
         e.preventDefault();
         // Handle OTP verification logic here
         dispatch(verifyEmailOtp(otp))
-        .then(() => {
-            setStep(3); // Assuming step 4 is the next step after phone verification
-            navigate("/verify-phone"); // Navigate to KYC page
-        });
          // Navigate to phone verification page
     };
 
@@ -68,7 +73,6 @@ const EmailVerify = ({setStep, user, token}) => {
                     <button
                         type="submit"
                         className="w-full mt-4 py-2 px-4 rounded bg-purple-600 text-white font-semibold hover:bg-purple-700 transition-colors duration-200"
-                        onClick={handleVerify}
                         disabled={!otp}>
                             Submit
                     </button>

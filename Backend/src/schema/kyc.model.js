@@ -8,18 +8,7 @@ const ModelSchema = new mongoose.Schema(
       ref: user,
       required: true,
     },
-    emiratesIdFront: {
-      fileName: {
-        type: String,
-      },
-      url: {
-        type: String,
-      },
-      size: {
-        type: String,
-      },
-    },
-    emiratesIdBack: {
+    emirates: {
       fileName: {
         type: String,
       },

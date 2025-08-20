@@ -4,6 +4,7 @@ import { sendPhoneOtp, verifyPhoneOtp } from "@/redux/actions/otpActions";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const PhoneVerify = ({setStep, user}) => {
     const [otpVisible, setOtpVisible] = useState(false);
@@ -13,20 +14,22 @@ const PhoneVerify = ({setStep, user}) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const { loading, error, success} = useSelector((state) => state.otp || {});
+    const { loading, error, verified} = useSelector((state) => state.otp || {});
 
     useEffect(() => {
         // Reset error when component mounts
         if (error) {
           toast.error(error);
         }
-        if(success){
-          toast.success("Successfull Mobile Verification! Redirecting to KYC verification...");
+        if(verified){
+            setStep(4); // Assuming step 4 is the next step after phone verification
+            navigate("/kyc");
+            toast.success("Successfull Mobile Verification! Redirecting to KYC verification...");
         }
-      }, [ error, success]);
+      }, [ error, verified, navigate, setStep]);
 
     const handleVerify = () => {
-        dispatch(sendPhoneOtp())
+        dispatch(sendPhoneOtp()) 
         setOtpVisible(true);
         setVerifyDisabled(true);
         // Here you can trigger your email OTP send logic
@@ -36,10 +39,6 @@ const PhoneVerify = ({setStep, user}) => {
         e.preventDefault();
         // Handle OTP verification logic here
         dispatch(verifyPhoneOtp(otp))
-        .then(() => {
-            setStep(4); // Assuming step 4 is the next step after phone verification
-            navigate("/kyc"); // Navigate to KYC page
-        });
     };
 
     return (
@@ -65,7 +64,6 @@ const PhoneVerify = ({setStep, user}) => {
                     <button
                         type="submit"
                         className="w-full mt-4 py-2 px-4 rounded bg-purple-600 text-white font-semibold hover:bg-purple-700 transition-colors duration-200"
-                        onClick={handleVerify}
                         disabled={!otp}>
                             Submit
                     </button>

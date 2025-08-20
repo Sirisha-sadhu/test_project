@@ -89,6 +89,8 @@ export default function Register({ setStep }) {
     }
     if(success){
       toast.success("Registration successful! Redirecting to email verification...");
+      setStep(2); // Assuming step 2 is the next step after registration
+      navigate("/verify-email"); // Navigate to email verification page
     }
   }, [ error, success]);
 
@@ -113,13 +115,8 @@ export default function Register({ setStep }) {
             confirmPassword: "",
           }}
           validationSchema={RegisterSchema}
-          onSubmit={(values, { setSubmitting }) => {
+          onSubmit={(values) => {
             dispatch(registerUser(values))
-              .then(() => {
-                setStep(2);
-                navigate("/verify-email");
-              })
-              .finally(() => setSubmitting(false));
           }}
         >
           {({ values, isSubmitting }) => (

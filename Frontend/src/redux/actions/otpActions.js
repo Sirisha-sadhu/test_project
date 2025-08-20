@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const token = JSON.parse(localStorage.getItem("user_token"));
+const token = JSON.parse(localStorage.getItem("register"));
 
 // Action Types
 export const SEND_OTP_REQUEST = 'SEND_OTP_REQUEST';
@@ -10,6 +10,8 @@ export const SEND_OTP_FAILURE = 'SEND_EMAIL_OTP_FAILURE';
 export const VERIFY_OTP_REQUEST = 'VERIFY_OTP_REQUEST';
 export const VERIFY_OTP_SUCCESS = 'VERIFY_OTP_SUCCESS';
 export const VERIFY_OTP_FAILURE = 'VERIFY_OTP_FAILURE';
+
+export const UPDATE_USER_PROFILE = "UPDATE_USER_PROFILE";
 
 // Send OTP to email
 export const sendEmailOtp = () => async (dispatch) => {
@@ -43,6 +45,13 @@ export const verifyEmailOtp = (otp) => async (dispatch) => {
         });
         console.log("Email OTP verification response:", response.data.data);
         dispatch({ type: VERIFY_OTP_SUCCESS, payload: response.data });
+        dispatch({
+            type: UPDATE_USER_PROFILE,
+            payload: { 
+            data: response.data.data, 
+            success: response.data.success
+        }
+})
     } catch (error) {
         dispatch({
             type: VERIFY_OTP_FAILURE,
@@ -82,6 +91,13 @@ export const verifyPhoneOtp = (otp) => async (dispatch) => {
         });
         console.log("Phone OTP verification response:", response.data.data);
         dispatch({ type: VERIFY_OTP_SUCCESS, payload: response.data });
+        dispatch({
+            type: UPDATE_USER_PROFILE,
+            payload: { 
+                data: response.data.data,
+                success: response.data.success 
+            }
+        })
     } catch (error) {
         dispatch({
             type: VERIFY_OTP_FAILURE,

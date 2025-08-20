@@ -1,10 +1,12 @@
 import { useState } from "react";
-import StepProgress from "../components/StepProgress";
 import { useNavigate, Link } from "react-router-dom";
 import FloatingInput from "@/components/FloatingInput";
+import { useDispatch } from "react-redux";
+import { userLogin } from "@/redux/actions/loginActions";
 
 export default function Login(setIsAuthenticated) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -22,19 +24,7 @@ export default function Login(setIsAuthenticated) {
   // Handle login
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (
-      storedUser &&
-      storedUser.email === formData.email &&
-      storedUser.password === formData.password
-    ) {
-      setIsAuthenticated(true);
-      setStep(3); // Go to KYC
-      navigate("/kyc");
-    } else {
-      alert("Invalid email or password!");
-    }
+    dispatch(userLogin(formData))
   };
 
 

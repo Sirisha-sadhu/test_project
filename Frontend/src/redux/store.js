@@ -3,6 +3,7 @@ import registerReducer from './reducers/registerReducers';
 import logoutReducer from './reducers/logoutReducers';
 import loginReducer from './reducers/loginReducers';
 import otpReducer from './reducers/otpReducer';
+import kycReducers from './reducers/kycReducers';
 
 
 const store = configureStore({
@@ -11,6 +12,7 @@ const store = configureStore({
         otp: otpReducer,
         register: registerReducer,
         logout: logoutReducer,
+        kyc:kycReducers
     },
 });
 
