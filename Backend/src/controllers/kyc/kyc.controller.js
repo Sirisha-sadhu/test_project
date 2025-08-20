@@ -50,8 +50,9 @@ const submitKycController = async (req, res, next) => {
       residenceAddress: buildFileData(req.files?.residenceAddress?.[0]),
       kycStatus: "pending"
     });
+    newKyc.save();
 
-    const user = await userModel.findByIdAndUpdate( req.user._id,{ isKycVerified: true, isKycDocsUploaded: true });
+    const user = await userModel.findByIdAndUpdate( req.user._id,{ isKycDocsUploaded: true });
 
     logger.info(
       "controller - kyc - kyc.controller - submitKycController - end"

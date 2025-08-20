@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import StepProgress from "../components/StepProgress";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -28,11 +28,11 @@ const FilePreview = ({ file }) => {
 };
 
 
-export default function KYC() {
+export default function KYC({setStep}) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { loading, verified } = useSelector((state) => state.kyc);
+  const { loading, verified, error } = useSelector((state) => state.kyc);
   
   useEffect(() => {
     // Reset error when component mounts
@@ -44,6 +44,7 @@ export default function KYC() {
       navigate("/dashboard");
       toast.success("✅ KYC Submitted Successfully 🎉");
       toast.info("Wait for KYC to be verified")
+      dispatch({type: 'KYC_RESET'})
     }
     }, [ error, verified, navigate, setStep]);
 

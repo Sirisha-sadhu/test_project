@@ -14,7 +14,13 @@ const PhoneVerify = ({setStep, user}) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const { loading, error, verified} = useSelector((state) => state.otp || {});
+    const { error, verified} = useSelector((state) => state.otp || {});
+
+    useEffect(() => {
+        if (user?.phoneVerified) {
+          navigate("/kyc"); // ✅ move to next step automatically
+        }
+        }, [user?.phoneVerified, navigate]);
 
     useEffect(() => {
         // Reset error when component mounts

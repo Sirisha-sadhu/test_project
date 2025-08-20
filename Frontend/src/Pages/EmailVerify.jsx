@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const EmailVerify = ({setStep, user, token}) => {
+const EmailVerify = ({setStep, user}) => {
     console.log("email verify ",user)
     const [otpVisible, setOtpVisible] = useState(false);
     const [otp, setOtp] = useState("");
@@ -16,6 +16,13 @@ const EmailVerify = ({setStep, user, token}) => {
     const navigate = useNavigate();
 
     const { error, verified} = useSelector((state) => state.otp || {});
+
+    useEffect(() => {
+    if (user?.emailVerified) {
+      navigate("/verify-phone"); // ✅ move to next step automatically
+    }
+    }, [user?.emailVerified, navigate]);
+
 
     useEffect(() => {
         // Reset error when component mounts

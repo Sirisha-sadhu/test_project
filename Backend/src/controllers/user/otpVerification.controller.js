@@ -39,6 +39,7 @@ const sendEmailOTPVerficationController = async (req, res, next) => {
       .lean();
       
     let otpDetails = null;
+    const otp = generateOTP();
 
     if (isOtpExist && isOtpExist.count >= 8) { 
       if (!isOtpExist?.limitCompleted) {
@@ -54,7 +55,7 @@ const sendEmailOTPVerficationController = async (req, res, next) => {
         )
       );
     } else if (isOtpExist) {
-      const otp = generateOTP();
+      
       otpDetails = await otpModel.findByIdAndUpdate(
         isOtpExist._id,
         {
@@ -65,8 +66,6 @@ const sendEmailOTPVerficationController = async (req, res, next) => {
         { new: true }
       );
     } else {
-      const otp = generateOTP();
-      console.log("Generated OTP:", otp);
       otpDetails = new otpModel({
         user: req.user._id,
         email: req.user.email,
@@ -83,7 +82,7 @@ const sendEmailOTPVerficationController = async (req, res, next) => {
     let mailDetails = {
       user_name: req.user.firstName,
       user_email: otpDetails.email,
-      otp: otpDetails.otp
+      otp: otp
     };
 
     await nodeMailerServiceClass.sendMail(otpDetails.email, "welcomeRegistrationTemplate", null, mailDetails);
@@ -184,6 +183,7 @@ const sendPhoneOTPVerficationController = async (req, res, next) => {
       .lean();
     
     let otpDetail = null;
+    const otp = generateOTP();  
 
     if (isOtpExist && isOtpExist.count >= 8) {
       if (!isOtpExist?.limitCompleted) { 
@@ -198,7 +198,7 @@ const sendPhoneOTPVerficationController = async (req, res, next) => {
         )
       );
     } else if (isOtpExist) {
-      const otp = generateOTP();  
+      
       otpDetail = await otpModel.findByIdAndUpdate(
         isOtpExist._id,
         {
@@ -209,8 +209,6 @@ const sendPhoneOTPVerficationController = async (req, res, next) => {
         { new: true }
       );
     } else {  
-      const otp = generateOTP();
-      console.log("Generated OTP:", otp);
       otpDetail = new otpModel({
         user: req.user._id,
         phoneNumber: req.user.countryCode + " " + req.user.phoneNumber ,
@@ -220,11 +218,8 @@ const sendPhoneOTPVerficationController = async (req, res, next) => {
       await otpDetail.save();
     }
 
-    console.log("OTP Details:", otpDetail);
 
-    const sendOTP = await sendOTPPhone(otpDetail.phoneNumber);
-
-    console.log("Generated OTP:", otp);
+    await sendOTPPhone(otpDetail.phoneNumber, otp);
 
     logger.info(
       "controller - users - otpVerfication.controller - phoneOTPVerficationController - end"

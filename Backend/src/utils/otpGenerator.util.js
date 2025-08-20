@@ -40,16 +40,14 @@ async function sendOTPEmail(toEmail) {
     }
 }
 
-const sendOTPPhone = async (phoneNumber) => {
+const sendOTPPhone = async (phoneNumber, otp) => {
     
     const accountSid = process.env.TWILIO_ACCOUNT_SID;
     const authToken = process.env.TWILIO_AUTH_TOKEN;
     const client = twilio(accountSid, authToken);
 
-    const phoneOtp = generateOTP();
-
     await client.messages.create({
-        body: `Your OTP for phone verification is: ${phoneOtp}`,
+        body: `Your OTP for phone verification is: ${otp}`,
         from: process.env.TWILIO_PHONE_NUMBER || +15158525571, // Your Twilio phone number
         to: phoneNumber,
     });
