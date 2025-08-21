@@ -1,11 +1,14 @@
 const httpErrors = require("http-errors");
-const userModel = require('../schema/user.model')
+const userModel = require('../schema/user.model');
+const kycModel = require('../schema/kyc.model')
+
 const ADMIN_CONSTANTS = require('../constants/admin.constants');
 const logger = require("../config/logger.config");
 const bcrypt = require("bcrypt");
 const { createAccessToken } = require("../utils/jwtToken.util");
 const errorHandling = require("../utils/errorHandling.util");
 const responseHandlerUtil = require("../utils/responseHandler.util");
+const { error } = require("winston");
 
 const adminLoginController = async (req, res, next) => {
   try {
@@ -41,6 +44,63 @@ const adminLoginController = async (req, res, next) => {
   }
 };
 
+const getUserDetailsController = async(req, res, next) => {
+  try{
+    logger.info('controller - admin - admin.controller - userDetailsController - start');
+
+    const kycDocs = await kycModel.find()
+
+    if(!kycDocs)
+      return next(httpErrors.BadRequest('Kyc Documents Not Found'));
+
+    responseHandlerUtil.successResponseStandard(res, {
+      success: true,
+      statusCode: 201,
+      otherData: { kycDocs },
+    });
+    logger.info("controller - admin - admin.controller - userDetailsController - end");
+  } 
+  catch(err){
+    logger.error('controller - admin - admin.controller - userDetailsController - error', error);
+    errorHandling.handleCustomErrorService(error, next);
+  }
+};
+
+
+const kycUpdateController = async(req, res, next)=>{
+  const {id, status} = req.params;
+  console.log(req.params)
+  try{
+    logger.info('controller - admin - admin.controller - kycUpdateController - start');
+  
+    const kyc = await kycModel.findOneAndUpdate({user: id}, { kycStatus: status});
+    const user = await userModel.findByIdAndUpdate(id, {isKycVerified: status=='approved'? true: false});
+
+    if(!kyc)
+      return next(httpErrors.BadRequest('Kyc Documents Not Found'));
+
+    if(!user)
+      return next(httpErrors.BadRequest('user Not found'));
+
+
+    logger.info("controller - admin - admin.controller - kycUpdateController - end");
+
+    responseHandlerUtil.successResponseStandard(res, {
+      success: true,
+      statusCode: 200,
+      otherData: {kycStatus: status}
+      
+    });
+  } 
+  catch(error){
+    console.log(error)
+    logger.error('controller - admin - admin.controller - kycUpdateController - error', error);
+    errorHandling.handleCustomErrorService(error, next);
+  }
+}
+
 module.exports = {
   adminLoginController,
+  getUserDetailsController,
+  kycUpdateController
 };

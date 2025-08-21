@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const { user } = require("../constants/model.constants");
+const { user, kyc } = require("../constants/model.constants");
 
 const ModelSchema = new mongoose.Schema(
   {
@@ -66,9 +66,10 @@ const ModelSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    isKycDocsUploaded: {
-      type: Boolean,
-      default: false,
+    kycDocsUploaded: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: kyc,
+      required: true,
     },
     token: {
       type: String,

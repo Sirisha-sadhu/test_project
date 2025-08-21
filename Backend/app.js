@@ -8,6 +8,7 @@ const morganConfigFunction = require("./src/config/morgan.config");
 const helmetConfig = require("./src/config/helmet.config");
 const IndexRoutes = require("./src/routes/index.routes");
 const errorHandling = require("./src/utils/errorHandling.util");
+const cloudinaryConfig = require("./src/config/cloudinary.config");
 
 const app = express();
 
@@ -16,11 +17,12 @@ const app = express();
 //----------------------------------------
 // MongoDataBaseConn
 MongoDataBaseConn();
+app.use("/public", express.static("public"));
 
 if (DEVELOPMENT_MODE === "development") {
   app.use(morganConfigFunction());
 }
-
+cloudinaryConfig();
 app.use(helmetConfig);
 app.use(ratelimitConfig);
 app.use(compression({ level: 6 }));

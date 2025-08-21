@@ -2,6 +2,8 @@ const express = require('express');
 const { userVerified, Authentication } = require('../../middlewares/auth.middleware');
 const { submitKycController } = require('../../controllers/kyc/kyc.controller');
 const { kycUpload } = require('../../middlewares/fileUpload');
+// const { kycUpload } = require('../../middlewares/cloudinaryUploads');
+
 
 const kycRouter = express.Router();
 

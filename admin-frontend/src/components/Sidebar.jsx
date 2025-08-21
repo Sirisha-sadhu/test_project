@@ -1,38 +1,3 @@
-// import { NavLink } from "react-router-dom";
-
-// export default function Sidebar() {
-//   return (
-//     <div className="w-64 h-screen bg-gray-900 text-white flex flex-col p-4">
-//       <h1 className="text-xl font-bold mb-6">Admin Panel</h1>
-//       <nav className="flex flex-col gap-4">
-//         <NavLink
-//           to="/dashboard"
-//           className={({ isActive }) =>
-//             isActive ? "bg-gray-700 px-4 py-2 rounded-lg" : "px-4 py-2"
-//           }
-//         >
-//           Dashboard
-//         </NavLink>
-//         <NavLink
-//           to="/users"
-//           className={({ isActive }) =>
-//             isActive ? "bg-gray-700 px-4 py-2 rounded-lg" : "px-4 py-2"
-//           }
-//         >
-//           Users
-//         </NavLink>
-//         <NavLink
-//           to="/transactions"
-//           className={({ isActive }) =>
-//             isActive ? "bg-gray-700 px-4 py-2 rounded-lg" : "px-4 py-2"
-//           }
-//         >
-//           Transactions
-//         </NavLink>
-//       </nav>
-//     </div>
-//   );
-// }
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 
@@ -73,9 +38,10 @@ export default function Sidebar() {
 
       {/* Sidebar */}
       <div
-        className={`fixed md:static bg-gray-800 text-white h-full w-64 p-6 transform ${
-          open ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 transition-transform duration-300`}
+        className={`fixed md:sticky top-0 left-0 bg-gray-800 text-white 
+          h-full md:h-screen w-64 p-6 transform 
+          ${open ? "translate-x-0" : "-translate-x-full"} 
+          md:translate-x-0 transition-transform duration-300`}
       >
         <h2 className="text-xl font-bold mb-6">Admin Panel</h2>
         <nav className="space-y-4">

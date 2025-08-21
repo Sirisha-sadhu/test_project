@@ -11,7 +11,7 @@ const {
 } = require("../config/index.config");
 const logger = require("../config/logger.config");
 // constants
-const { USER_NOT_FOUND } = require("../constants/user.constants");
+const { ADMIN_NOT_FOUND } = require("../constants/admin.constants");
 const {
   AUTHENTICATION_TOKEN_REQUIRED,
   AUTHORIZATION_REQUIRED,
@@ -39,7 +39,7 @@ const Authentication = async (req, res, next) => {
     let userExist = await userModel.findById(decode.id).lean();
 
     if (!userExist) {
-      return next(httpErrors.NotFound(USER_NOT_FOUND));
+      return next(httpErrors.NotFound(ADMIN_NOT_FOUND));
     }
     req.user = userExist;
     req.role = userExist?.role;

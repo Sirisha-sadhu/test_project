@@ -9,14 +9,14 @@ const logger = require("../../config/logger.config");
 const errorHandling = require("../../utils/errorHandling.util");
 const responseHandlerUtil = require("../../utils/responseHandler.util");
 const { AWS_S3_UPLOAD } = require("../../config/index.config");
+const cloudinary = require("cloudinary");
+const { default: uploadFilesToCloudinary } = require("../../utils/uploadCloudinary");
 
 const submitKycController = async (req, res, next) => {
   try {
     logger.info(
       "controller - kyc - kyc.controller - submitKycController - start"
     );
-
-    console.log(req.files)
 
     const {passportFront, passportBack, emirates} = req.files;
 
@@ -33,21 +33,24 @@ const submitKycController = async (req, res, next) => {
       );
     }
 
+    const myCloud = await uploadFilesToCloudinary(req.files);
+
+
     const buildFileData = (file) => {
       if (!file) return null;
       return {
-        fileName: file.originalname,
-        url: file.location || file.path, // S3 -> location, Local -> path
-        size: `${file.size} bytes`,
-      };
+        public_id: file.public_id,
+        format: file.format,
+        url: file.secure_url,
+        name: file.original_filename
+      };  
     };
 
     const newKyc = new kycModel({
       user: req.user._id,
-      emirates: buildFileData(req.files?.emirates?.[0]),
-      passportFront: buildFileData(req.files?.passportFront?.[0]),
-      passportBack: buildFileData(req.files?.passportBack?.[0]),
-      residenceAddress: buildFileData(req.files?.residenceAddress?.[0]),
+      emirates: buildFileData(myCloud?.emirates),
+      passportFront: buildFileData(myCloud?.passportFront),
+      passportBack: buildFileData(myCloud?.passportBack),
       kycStatus: "pending"
     });
     newKyc.save();
