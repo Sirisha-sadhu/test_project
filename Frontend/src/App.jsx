@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { ToastContainer } from "react-toastify";
 import { useSelector, useDispatch } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
+import MainDashboard from "./pages/MainDashboard";
 
 import WaitingPage from "./Pages/WaitingPage";
 import Dashboard from "./Pages/Dashboard";
@@ -100,7 +101,19 @@ export default function App() {
             />
           }
         />
+        <Route
+  path="/maindashboard"
+  element={
+    <ProtectedRoute
+      condition={userInfo?.kycStatus === "approved"}
+      redirectTo="/kyc" // or wherever pending users should go
+      element={MainDashboard}
+    />
+  }
+/>
       </Routes>
+      
+
 
       <ToastContainer position="top-center" autoClose={1500} />
     </Router>

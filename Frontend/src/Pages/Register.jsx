@@ -16,9 +16,22 @@ export default function Register({ setStep }) {
   const dispatch = useDispatch();
   const [passwordFocused, setPasswordFocused] = useState(false);
 
-  const { loading, error, success } = useSelector(
-    (state) => state.register || {}
-  );
+
+  // Optional: Get loading/error states from Redux
+  const { loading, error, success} = useSelector((state) => state.register || {});
+  console.log("Register page userInfo:", success, loading, error);
+
+  useEffect(() => {
+    // Reset error when component mounts
+    if (error) {
+      toast.error(error);
+    }
+    if(success){
+      toast.success("Registration successful!Redirecting to email verification...");
+      setStep(2); // Assuming step 2 is the next step after registration
+      navigate("/verify-email"); // Navigate to email verification page
+    }
+  }, [ error, success]);
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 px-4 py-6">

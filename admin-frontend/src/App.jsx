@@ -6,7 +6,9 @@ import AdminDashboard from "./pages/AdminDashboard";
 import Users from "./pages/Users";
 import Transactions from "./pages/Transactions";
 import AdminLogin from "./pages/AdminLogin";
-import { useState, useEffect } from "react";
+import ApprovedKycs from "./pages/ApprovedKycs";
+import RejectedKycs from "./pages/RejectedKycs";
+
 
 export default function App() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -17,36 +19,25 @@ export default function App() {
   }, [token]);
 
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Redirect root to login */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+  <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/login" element={<AdminLogin />} />
+      <Route path="/dashboard" element={
+            <AdminDashboard />
+        }/>
+      <Route path="/users" element={
+          
+            <Users />
+          
+        } />
+      <Route path="/transactions" element={ <Transactions /> } />
+      <Route path="/approvedKyc" element={ <ApprovedKycs /> } />
+      <Route path="/rejectedKyc" element={ <RejectedKycs /> } />
 
-        {/* Public route */}
-        <Route path="/login" element={<AdminLogin />} />
-
-        {/* Protected routes */}
-        <Route
-          path="/dashboard"
-          element={authenticated ? <AdminDashboard /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/users"
-          element={authenticated ? <Users /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/transactions"
-          element={authenticated ? <Transactions /> : <Navigate to="/login" />}
-        />
-
-        {/* Fallback */}
-        <Route
-          path="*"
-          element={<h1 className="p-6 text-red-600">404 - Page Not Found</h1>}
-        />
-      </Routes>
-
-      <ToastContainer position="top-center" autoClose={1500} />
-    </BrowserRouter>
+      <Route path="*" element={<h1 className="p-6 text-red-600">404 - Page Not Found</h1>}/>
+    </Routes>
+    <ToastContainer position="top-center" autoClose={1500} />
+  </BrowserRouter>
   );
 }
