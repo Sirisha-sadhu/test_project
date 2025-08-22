@@ -1,7 +1,6 @@
 
 import Sidebar from "../components/Sidebar";
 import { useSelector, useDispatch } from "react-redux";
-import { approveUser, rejectUser } from "../redux/reducers/adminSlice";
 import { useEffect } from "react";
 import { updateUserKyc, userDetails } from "../redux/reducers/userSlice";
 
@@ -90,13 +89,13 @@ export default function Users() {
                       <div className="flex justify-center gap-2">
                         <button
                           className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 text-sm"
-                          onClick={() => dispatch(updateUserKyc({id:u.user, status:'approved'}))}
+                          onClick={() => dispatch(updateUserKyc({id:u._id, status:'approved'}))}
                         >
                           Approve
                         </button>
                         <button
                           className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm"
-                          onClick={() => dispatch(updateUserKyc({id:u.user, status:'rejected'}))}
+                          onClick={() => dispatch(updateUserKyc({id:u._id, status:'rejected'}))}
                         >
                           Reject
                         </button>

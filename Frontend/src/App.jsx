@@ -1,11 +1,13 @@
 
+
 import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { useSelector, useDispatch } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
 
-import Dashboard from "./pages/Dashboard";
+import WaitingPage from "./Pages/WaitingPage";
+import Dashboard from "./Pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import PhoneVerify from "./pages/PhoneVerify";
@@ -26,6 +28,7 @@ export default function App() {
   const { userInfo } = useSelector((state) => state.register);
   const dispatch = useDispatch();
 
+  console.log(userInfo)
   useEffect(() => {
     if (token) dispatch(fetchUserProfile());
   }, [token, dispatch]);
@@ -45,7 +48,7 @@ export default function App() {
           path="/"
           element={
             <ProtectedRoute
-              condition={isAuthenticated}
+              condition={userInfo?.isKycDocsUploaded}
               redirectTo="/login"
               element={Dashboard}
             />
@@ -88,12 +91,12 @@ export default function App() {
           }
         />
         <Route
-          path="/dashboard"
+          path="/wait"
           element={
             <ProtectedRoute
               condition={userInfo?.isKycDocsUploaded}
               redirectTo="/kyc"
-              element={Dashboard}
+              element={WaitingPage}
             />
           }
         />

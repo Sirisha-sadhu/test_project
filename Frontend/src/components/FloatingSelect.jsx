@@ -1,22 +1,28 @@
+import { Field } from "formik";
 
-import { Field, ErrorMessage, useFormikContext } from "formik";
-
-const FloatingInput = ({ label, type, name, value, errors, touched, ...props }) => {
-   const { values } = useFormikContext(); // ✅ Access form values safely
-  const isActive = values[name] && values[name].length > 0;
+const FloatingSelect = ({ label, name, value, options, errors, touched, ...props }) => {
+  const isActive = value && value.length > 0;
 
   return (
     <div className="relative w-full">
       <Field
-        type={type}
+        as="select"
         name={name}
-        placeholder=" "
         {...props}
-        className={`peer w-full px-4 py-2 border rounded-lg outline-none
+        className={`peer w-full px-4 py-2 border rounded-lg outline-none bg-white
           ${touched[name] && errors[name] 
             ? "border-red-500 focus:ring-red-500" 
             : "border-gray-300 focus:ring-blue-500"}`}
-      />
+      >
+        <option value="" disabled hidden>
+          Select {label}
+        </option>
+        {options.map((opt, idx) => (
+          <option key={idx} value={opt.value || opt}>
+            {opt.label || opt}
+          </option>
+        ))}
+      </Field>
       <label
         className={`absolute left-4 px-1 bg-white transition-all
           ${isActive
@@ -33,4 +39,4 @@ const FloatingInput = ({ label, type, name, value, errors, touched, ...props }) 
   );
 };
 
-export default FloatingInput;
+export default FloatingSelect;

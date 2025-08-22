@@ -21,6 +21,9 @@ const registerReducer = (state = initialState, action) => {
         case 'USER_PROFILE_Failure':
             return { ...state, success: action.payload.success };
 
+        case 'USER_RESET':
+            return {...initialState}
+
             
         default:
             return state;

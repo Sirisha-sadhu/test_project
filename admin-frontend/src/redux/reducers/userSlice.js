@@ -1,13 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+const base_url = import.meta.env.VITE_ADMIN_URL
 
-const token = localStorage.getItem('admin')
+const token = JSON.parse(localStorage.getItem('admin'))
 
+console.log("admin url", base_url)
 export const userDetails = createAsyncThunk(
   'users',
   async () => {
     try {
-      const response = await axios.get(`http://localhost:8001/api/v1/admin/get-users`, {
+      const response = await axios.get(`${base_url}/admin/get-users`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
@@ -24,15 +26,22 @@ export const userDetails = createAsyncThunk(
 
 export const updateUserKyc = createAsyncThunk(
   'kycUpdate',
-  async({id, status})=>{
+  async({id, status}, {getState})=>{
     try {
-      const response = await axios.get(`http://localhost:8001/api/v1/admin/updateKyc/${id}/${status}`,{
+      const response = await axios.put(`${base_url}/admin/updateKyc/${id}`,{status},{
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data)
+      
+      const state = getState();
+      const updatedKycDoc = state.kycDocs.map((doc)=>{
+        if(doc._id == id){
+          return {...doc, kycStatus: status}
+        }
+        return doc 
+      })
       return response.data;
     } catch (err) {
       console.log(err);
@@ -77,7 +86,7 @@ const userSlice = createSlice({
         state.success = false;
       })
       .addCase(updateUserKyc.fulfilled, (state, action) => {
-        state.kycStatus = action.payload.kycStatus;
+        state.kycDocs = action.payload;
         state.success = true;
         state.error = null
       })
