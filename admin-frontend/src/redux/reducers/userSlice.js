@@ -5,7 +5,6 @@ const BASE_URL = import.meta.env.VITE_ADMIN_URL || "http://localhost:8001/api/v1
 
 const token = JSON.parse(localStorage.getItem('admin'))
 
-console.log("admin url", base_url)
 export const userDetails = createAsyncThunk(
   'users',
   async () => {
@@ -89,7 +88,7 @@ const userSlice = createSlice({
       .addCase(updateUserKyc.fulfilled, (state, action) => {
         state.kycDocs = action.payload;
         state.success = true;
-        state.error = null
+         state.error = null
       })
       
       .addCase(updateUserKyc.rejected, (state, action) => {

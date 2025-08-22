@@ -11,12 +11,7 @@ import RejectedKycs from "./pages/RejectedKycs";
 
 
 export default function App() {
-  const [authenticated, setAuthenticated] = useState(false);
   const token = localStorage.getItem("admin");
-
-  useEffect(() => {
-    setAuthenticated(!!token); // ✅ convert to boolean
-  }, [token]);
 
   return (
   <BrowserRouter>
@@ -27,9 +22,7 @@ export default function App() {
             <AdminDashboard />
         }/>
       <Route path="/users" element={
-          
             <Users />
-          
         } />
       <Route path="/transactions" element={ <Transactions /> } />
       <Route path="/approvedKyc" element={ <ApprovedKycs /> } />

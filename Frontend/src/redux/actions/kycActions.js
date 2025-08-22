@@ -38,6 +38,23 @@ export const submitKycDocuments = (files) => async(dispatch)=>{
                 type: 'KYC_SUCCESS',
                 payload: response.data
             })
+            const socket = io("http://localhost:8001");
+
+            // Register this user (so backend can target events)
+            socket.emit("registerUser", response.data.userId);
+
+            // Listen for admin decision
+            socket.on("kycStatusUpdated", (data) => {
+            console.log("KYC Status from admin:", data);
+
+            if (data.status === "approved") {
+                dispatch({ type: "KYC_APPROVED" });
+                socket.disconnect(); // ✅ Done, disconnect
+            } else if (data.status === "rejected") {
+                dispatch({ type: "KYC_REJECTED", payload: data.reason });
+                socket.disconnect(); // ✅ Done, disconnect
+            }
+        });
         }
 
     }

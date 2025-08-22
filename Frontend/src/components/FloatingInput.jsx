@@ -13,7 +13,7 @@ const FloatingInput = ({ label, type, name, value, errors, touched, ...props }) 
         placeholder=" "
         {...props}
         className={`peer w-full px-4 py-2 border rounded-lg outline-none
-          ${touched[name] && errors[name] 
+          ${touched?.[name] && errors?.[name] 
             ? "border-red-500 focus:ring-red-500" 
             : "border-gray-300 focus:ring-blue-500"}`}
       />
@@ -26,8 +26,8 @@ const FloatingInput = ({ label, type, name, value, errors, touched, ...props }) 
       >
         {label}
       </label>
-      {touched[name] && errors[name] && (
-        <div className="text-red-500 text-sm mt-1">{errors[name]}</div>
+      {touched?.[name] && errors?.[name] && (
+        <div className="text-red-500 text-sm mt-1">{errors?.[name]}</div>
       )}
     </div>
   );

@@ -15,6 +15,7 @@ import PhoneVerify from "./pages/PhoneVerify";
 import EmailVerify from "./pages/EmailVerify";
 import KYC from "./pages/KYC";
 import { fetchUserProfile } from "./redux/actions/registerActions";
+import { io } from "socket.io-client";
 
 // ✅ Reusable ProtectedRoute
 const ProtectedRoute = ({ condition, redirectTo, element: Component, ...rest }) => {

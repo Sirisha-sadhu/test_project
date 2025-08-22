@@ -9,6 +9,8 @@ const { createAccessToken } = require("../utils/jwtToken.util");
 const errorHandling = require("../utils/errorHandling.util");
 const responseHandlerUtil = require("../utils/responseHandler.util");
 const { error } = require("winston");
+const { io } = require("socket.io-client");
+const { getIO } = require("../config/socket.config");
 
 const adminLoginController = async (req, res, next) => {
   try {
@@ -82,6 +84,8 @@ const kycUpdateController = async(req, res, next)=>{
 
     if(!user)
       return next(httpErrors.BadRequest('user Not found'));
+
+    getIO().to(kyc?.user.toString()).emit("statusUpdated", { kycstatus: status });
 
 
     logger.info("controller - admin - admin.controller - kycUpdateController - end");

@@ -24,6 +24,7 @@ export const registerUser = (userData) => async (dispatch) => {
                 type: REGISTER_SUCCESS,
                 payload: response.data
             });
+            
         }
         else{
             dispatch({
