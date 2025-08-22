@@ -10,7 +10,7 @@ export default function AdminLogin() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
- const { success, error, loading, isAuthenticated } = useSelector((state) => state.admin);
+ const { success, error, loading } = useSelector((state) => state.admin);
 
   console.log(success, error)
 

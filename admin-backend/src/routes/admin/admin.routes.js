@@ -8,6 +8,6 @@ const adminRoutes = express.Router();
 // Admin login route
 adminRoutes.route("/login").post(adminLoginController);
 adminRoutes.route('/get-users').get(Authentication, getUserDetailsController)
-adminRoutes.route('/updateKyc/:id/:status').get(Authentication, kycUpdateController)
+adminRoutes.route('/updateKyc/:id').put(Authentication, kycUpdateController)
 
 module.exports = adminRoutes;

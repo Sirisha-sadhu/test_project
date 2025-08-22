@@ -88,7 +88,7 @@ export default function Register({ setStep }) {
       toast.error(error);
     }
     if(success){
-      toast.success("Registration successful! Redirecting to email verification...");
+      toast.success("Registration successful!Redirecting to email verification...");
       setStep(2); // Assuming step 2 is the next step after registration
       navigate("/verify-email"); // Navigate to email verification page
     }

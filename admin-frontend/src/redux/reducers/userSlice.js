@@ -1,13 +1,15 @@
+
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+const BASE_URL = import.meta.env.VITE_ADMIN_URL || "http://localhost:8001/api/v1";
 
-const token = localStorage.getItem('admin')
+const token = JSON.parse(localStorage.getItem('admin'))
 
 export const userDetails = createAsyncThunk(
   'users',
   async () => {
     try {
-      const response = await axios.get(`http://localhost:8001/api/v1/admin/get-users`, {
+      const response = await axios.get(`${BASE_URL}/admin/get-users`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
@@ -16,7 +18,7 @@ export const userDetails = createAsyncThunk(
       console.log(response.data)
       return response.data;
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
       throw err;
     }
   }
@@ -24,18 +26,27 @@ export const userDetails = createAsyncThunk(
 
 export const updateUserKyc = createAsyncThunk(
   'kycUpdate',
-  async({id, status})=>{
+  async({id, status}, {getState})=>{
     try {
-      const response = await axios.get(`http://localhost:8001/api/v1/admin/updateKyc/${id}/${status}`,{
+      const response = await axios.put(`${BASE_URL}/admin/updateKyc/${id}`,{status },{
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
       });
+
+      const state = getState();
+
+      const updateKycDocs = state.user.kycDocs.map((doc) => {
+        if (doc._id === id) { 
+          return { ...doc, kycStatus: status };
+        }
+        return doc;
+      });
       console.log(response.data)
-      return response.data;
+      return updateKycDocs;
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
       throw err;
     }
   } 
@@ -44,9 +55,8 @@ export const updateUserKyc = createAsyncThunk(
 
 const initialState = {
   success: false,
-  kycDocs: {},
+  kycDocs: [],
   error: null,
-  kycStatus: 'pending'
 }
 
 const userSlice = createSlice({
@@ -65,7 +75,6 @@ const userSlice = createSlice({
         state.success = true;
         state.error = null
       })
-      
       .addCase(userDetails.rejected, (state, action) => {
         state.loading = true;
         state.error = action.payload;
@@ -77,7 +86,7 @@ const userSlice = createSlice({
         state.success = false;
       })
       .addCase(updateUserKyc.fulfilled, (state, action) => {
-        state.kycStatus = action.payload.kycStatus;
+        state.kycDocs = action.payload;
         state.success = true;
         state.error = null
       })
@@ -87,8 +96,10 @@ const userSlice = createSlice({
               state.error = action.payload;
               state.success = false;
       })
+      
   }
 });
 
 
 export default userSlice.reducer;
+

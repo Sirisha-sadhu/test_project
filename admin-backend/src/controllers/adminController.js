@@ -68,13 +68,14 @@ const getUserDetailsController = async(req, res, next) => {
 
 
 const kycUpdateController = async(req, res, next)=>{
-  const {id, status} = req.params;
+  const {id} = req.params;
+  const {status} = req.body;
   console.log(req.params)
   try{
     logger.info('controller - admin - admin.controller - kycUpdateController - start');
   
-    const kyc = await kycModel.findOneAndUpdate({user: id}, { kycStatus: status});
-    const user = await userModel.findByIdAndUpdate(id, {isKycVerified: status=='approved'? true: false});
+    const kyc = await kycModel.findByIdAndUpdate(id, { kycStatus: status}, {new: true});
+    const user = await userModel.findByIdAndUpdate(kyc.user.toString(), {isKycVerified: status=='approved'? true: false});
 
     if(!kyc)
       return next(httpErrors.BadRequest('Kyc Documents Not Found'));

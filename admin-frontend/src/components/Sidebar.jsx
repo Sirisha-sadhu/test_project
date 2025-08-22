@@ -54,6 +54,12 @@ export default function Sidebar() {
           <NavLink to="/transactions" className="block hover:underline">
             Transactions
           </NavLink>
+          <NavLink to="/approvedKyc" className="block hover:underline">
+            ApprovedKYC
+          </NavLink>
+          <NavLink to="/rejectedKyc" className="block hover:underline">
+            RejectedKyc
+          </NavLink>
         </nav>
       </div>
     </div>
